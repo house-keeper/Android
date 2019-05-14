@@ -12,14 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.HomeActivity">
-        </activity>
-        <activity android:name=".ui.activity.RecordActivity" >
-
-        </activity>
-        <activity android:name=".ui.activity.WindowActivity">
-        </activity>
-        <activity android:name=".ui.activity.DoorActivity" android:configChanges="orientation|keyboardHidden|screenSize">
+        <activity android:name=".ui.activity.SettingActivity"></activity>
+        <activity android:name=".ui.activity.HomeActivity"></activity>
+        <activity android:name=".ui.activity.RecordActivity"></activity>
+        <activity android:name=".ui.activity.WindowActivity"></activity>
+        <activity
+            android:name=".ui.activity.DoorActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
