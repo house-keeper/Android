@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:title="search"
+        android:icon="@drawable/bar_button_alarm"
+        android:id="@+id/door_menu_alarm"
+        app:showAsAction="always"
+        />
+        <item
+            android:title="account"
+            android:icon="@drawable/bar_button_record"
+            android:id="@+id/door_menu_record"
+            app:showAsAction="always"
+            />
+
+</menu>
+
+
