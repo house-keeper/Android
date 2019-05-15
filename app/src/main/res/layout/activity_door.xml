@@ -109,11 +109,19 @@
                 android:layout_gravity="center" />
 
             <Button
+                android:id="@+id/btnRecord"
                 android:layout_width="60dp"
                 android:layout_height="55dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/mic" />
+            <Button
+                android:id="@+id/btnPlay"
+                android:layout_width="60dp"
+                android:layout_height="55dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/bar_button_alarm" />
 
         </LinearLayout>
 

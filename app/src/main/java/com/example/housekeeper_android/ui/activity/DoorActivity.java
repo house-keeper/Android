@@ -1,23 +1,37 @@
 package com.example.housekeeper_android.ui.activity;
 
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class DoorActivity extends AppCompatActivity {
 
 
     Toolbar door_toolbar;
+
     private WebView door_streaming;
 
     @Override
@@ -51,6 +65,7 @@ public class DoorActivity extends AppCompatActivity {
         });
         door_streaming.loadUrl("http://jsmjsm.iptime.org:8885/?action=stream");
     }
+
 
     //ToolBar에 menu.xml을 인플레이트함
     @Override
