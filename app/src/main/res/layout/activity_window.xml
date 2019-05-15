@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="16시 현재\n10℃ 흐림\n강수확률 0%\n미세먼지 좋음"
+            android:text="16시 현재"
             android:textSize="18sp" />
     </LinearLayout>
 
