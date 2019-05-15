@@ -1,8 +1,13 @@
 package com.example.housekeeper_android.ui.activity;
 
+import android.content.ContentUris;
+import android.content.Context;
+import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,12 +59,17 @@ public class RecordvoiceActivity extends AppCompatActivity {
         txtFileName = (EditText)findViewById(R.id.txtFileName);
         mRecorder = new MediaRecorder();
 
+
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File file = new File(mPath);
+                Uri uri = Uri.fromFile(new File(mPath));
+                File file = new File(String.valueOf(uri));
+               // File file = new File(mPath);
+                Log.d("PATH_TEST",String.valueOf(uri));
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                MultipartBody.Part uploadFile = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+                //MultipartBody.Part uploadFile = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+                MultipartBody.Part uploadFile = MultipartBody.Part.createFormData("file",file.getName(),requestFile);
 
                 Call<PostRecordFileResponse> postRecordFileResponseCall = networkService.postRecordFile(uploadFile);
                 postRecordFileResponseCall.enqueue(new Callback<PostRecordFileResponse>() {
@@ -76,7 +86,6 @@ public class RecordvoiceActivity extends AppCompatActivity {
             }
         });
 
-
         btnRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,9 +97,6 @@ public class RecordvoiceActivity extends AppCompatActivity {
                     btnRecord.setText("멈추기");
                 } else {
                     mRecorder.stop();
-
-                    // 파일 불러오기
-                    loadAudioFile();
 
                     isRecording = false;
                     btnRecord.setText("녹음하기");
@@ -136,7 +142,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
 
     void initAudioRecorder() {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         fileName = txtFileName.getText().toString();
 
@@ -147,7 +153,10 @@ public class RecordvoiceActivity extends AppCompatActivity {
         SimpleDateFormat time = new SimpleDateFormat("hhmmss");
         todayDate = date.format(today)+time.format(today);
         */
-        mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+fileName+".aac";
+
+
+       mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+fileName+".mp4";
+      //  mPath = Context.getFilesDir().getAbsolutePath()
         Log.d("RECORD_TEST", "file path is " + mPath);
         mRecorder.setOutputFile(mPath);
         try {
@@ -156,6 +165,16 @@ public class RecordvoiceActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+    /*
+    public Uri getUriFromPath(String filePath) {
+        Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, "_data = '" + filePath + "'", null, null); cursor.moveToNext();
+        int id = cursor.getInt(cursor.getColumnIndex("_id"));
+        Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+        return uri;
+    }
+    */
+
+    /*
     //데이터 로드 메소드
     public String loadAudioFile() {
         String sdPath;  //SD 카드의 경로
@@ -183,6 +202,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
         }
         return result;
     }
+    */
 
 
 
