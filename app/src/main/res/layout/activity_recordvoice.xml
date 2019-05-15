@@ -41,6 +41,7 @@
             android:text="녹음할 음성 파일명"/>
 
         <EditText
+            android:id="@+id/txtFileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="문 앞에 놔주세요."/>
@@ -59,6 +60,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:text="재생"/>
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="저장"/>
 
     </LinearLayout>
 
