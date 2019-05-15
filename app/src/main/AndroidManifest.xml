@@ -15,7 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.activity.RecordvoiceActivity"></activity>
+        <activity android:name=".ui.activity.RecordvoiceActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.activity.SettingActivity" />
         <activity android:name=".ui.activity.HomeActivity" />
         <activity android:name=".ui.activity.RecordActivity" />
@@ -23,11 +29,7 @@
         <activity
             android:name=".ui.activity.DoorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
