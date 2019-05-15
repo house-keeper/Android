@@ -23,17 +23,17 @@
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_weight="1">
+        android:layout_weight="2">
 
         <WebView
             android:id="@+id/door_webview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            />
+            android:layout_margin="5dp" />
 
 
         <Button
+            android:id="@+id/interphone_capture_btn"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:background="@drawable/camera_button"
@@ -45,17 +45,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_weight="3"
+        android:background="@drawable/interphone_text_round"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
-            <EditText
+            <TextView
+                android:id="@+id/interphone_outsider_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:textSize="18sp"
                 android:background="@null"
                 android:text="택배입니다." />
 
@@ -66,13 +69,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/interphone_my_message_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="5dp"
@@ -82,12 +86,14 @@
             android:background="@drawable/interphone_text_round">
 
             <EditText
+                android:id="@+id/interphone_my_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
                 android:background="@null"
-                android:text="누구세요? 문 앞에 놔 주세요" />
+                android:inputType="text"
+                />
 
 
         </LinearLayout>
@@ -100,28 +106,23 @@
             android:orientation="vertical">
 
             <Button
+                android:id="@+id/interphone_send_message_btn"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
                 android:text="전송"
                 android:textSize="20sp"
                 android:textColor="#FFFFFF"
+
                 android:background="@drawable/interphone_send_button_round"
                 android:layout_gravity="center" />
 
             <Button
-                android:id="@+id/btnRecord"
+                android:id="@+id/interphone_send_record_btn"
                 android:layout_width="60dp"
                 android:layout_height="55dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/mic" />
-            <Button
-                android:id="@+id/btnPlay"
-                android:layout_width="60dp"
-                android:layout_height="55dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/bar_button_alarm" />
 
         </LinearLayout>
 
