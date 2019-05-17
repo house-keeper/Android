@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
 import com.example.housekeeper_android.ui.Network.ApplicationController;
@@ -22,6 +23,11 @@ import com.example.housekeeper_android.ui.Network.Post.PostRecordFileResponse;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -63,19 +69,17 @@ public class RecordvoiceActivity extends AppCompatActivity {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.fromFile(new File(mPath));
-                File file = new File(String.valueOf(uri));
-               // File file = new File(mPath);
-                Log.d("PATH_TEST",String.valueOf(uri));
-                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-                //MultipartBody.Part uploadFile = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-                MultipartBody.Part uploadFile = MultipartBody.Part.createFormData("file",file.getName(),requestFile);
+
+                File file = new File(mPath);
+               RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
+               MultipartBody.Part uploadFile = MultipartBody.Part.createFormData("file","test.mp4", requestFile);
 
                 Call<PostRecordFileResponse> postRecordFileResponseCall = networkService.postRecordFile(uploadFile);
                 postRecordFileResponseCall.enqueue(new Callback<PostRecordFileResponse>() {
                     @Override
                     public void onResponse(Call<PostRecordFileResponse> call, Response<PostRecordFileResponse> response) {
-
+                        Log.d("RESPONSE_TEST",String.valueOf(response.body()));
+                        Toast.makeText(getApplicationContext(),String.valueOf(response.body().message),Toast.LENGTH_SHORT);
                     }
 
                     @Override
@@ -146,14 +150,6 @@ public class RecordvoiceActivity extends AppCompatActivity {
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         fileName = txtFileName.getText().toString();
 
-        /* 오늘의 날짜 불러오기 & 파일명 지정
-        Date today = new Date();
-        System.out.println(today);
-        SimpleDateFormat date = new SimpleDateFormat("yyMMdd");
-        SimpleDateFormat time = new SimpleDateFormat("hhmmss");
-        todayDate = date.format(today)+time.format(today);
-        */
-
 
        mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+fileName+".mp4";
       //  mPath = Context.getFilesDir().getAbsolutePath()
@@ -165,45 +161,5 @@ public class RecordvoiceActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    /*
-    public Uri getUriFromPath(String filePath) {
-        Cursor cursor = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, "_data = '" + filePath + "'", null, null); cursor.moveToNext();
-        int id = cursor.getInt(cursor.getColumnIndex("_id"));
-        Uri uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-        return uri;
-    }
-    */
-
-    /*
-    //데이터 로드 메소드
-    public String loadAudioFile() {
-        String sdPath;  //SD 카드의 경로
-        String externalState = Environment.getExternalStorageState();
-        if (externalState.equals(Environment.MEDIA_MOUNTED)) {
-            //외부 저장 장치가 마운트 되어서 읽어올 준비가 되었을 때
-            sdPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        } else {
-            //마운트 되지 않았을 때
-            sdPath = Environment.MEDIA_UNMOUNTED;
-        }
-        String result = "";
-        try {
-            String dir = sdPath + "/" + fileName + ".aac";
-            //파일에서 읽어오기 위한 스트림 객체
-            File file = new File(dir);
-            FileInputStream fis = new FileInputStream(file);
-            byte[] buffer = new byte[fis.available()];
-            fis.read(buffer);
-            fis.close();
-            result = new String(buffer);
-            Log.d("RECORD_TEST",result.toString());
-        } catch (Exception e) {
-            Log.i("RECORD_TEST", "불러오기 실패: "+e.getMessage());
-        }
-        return result;
-    }
-    */
-
-
 
 }

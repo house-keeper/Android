@@ -13,17 +13,8 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 public interface NetworkService {
-/*
-    @Multipart
-    @POST("s3/upload")
-    Call<PostRecordFileResponse> postRecordFile(
-            @Part("file")  RequestBody file);
-*/
-
-
     @Multipart
     @POST("s3/upload")
     Call<PostRecordFileResponse> postRecordFile(
             @Part MultipartBody.Part file);
-
 }
