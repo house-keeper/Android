@@ -36,8 +36,8 @@ public class IPTestActivity extends AppCompatActivity implements View.OnClickLis
     private DataOutputStream dos;
     private DataInputStream dis;
 
-    private String ip = "192.168.0.76";            // IP 번호
-    private int port = 8885;                          // port 번호
+    private String ip = "172.20.10.13";            // IP 번호
+    private int port = 8080;                          // port 번호
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,16 +1,11 @@
 package com.example.housekeeper_android.ui.fragment.dummy;
 
-
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.housekeeper_android.R;
-
 
 class RecordDooritem extends LinearLayout {
     TextView door_status;
