@@ -67,7 +67,7 @@
         android:background="#bbf7f6">
 
         <TextView
-            android:id="@+id/window_status"
+            android:id="@+id/window_s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -80,8 +80,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="21dp"
-            android:layout_toRightOf="@id/window_status"
-            android:text=" 열림"
+            android:layout_toRightOf="@id/window_s"
+            android:id="@+id/window_status"
+            android:text="닫힘"
             android:textSize="18sp" />
 
         <Switch
@@ -89,7 +90,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginTop="22dp"
-            android:layout_marginRight="20dp" />
+            android:layout_marginRight="20dp"
+            android:id="@+id/window_status_btn"/>
+
     </RelativeLayout>
 
 

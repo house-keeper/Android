@@ -1,29 +1,54 @@
 package com.example.housekeeper_android.ui.activity;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
+import com.example.housekeeper_android.ui.Network.ApplicationController;
+import com.example.housekeeper_android.ui.Network.NetworkService;
+import com.example.housekeeper_android.ui.Network.Post.PostRecordFileResponse;
+import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class WindowActivity extends AppCompatActivity {
 
     Toolbar window_toolbar;
+    Switch window_status_switch;
+    public static String wifiModuleIp = "172.20.10.13";
+    public static int wifiModulePort = 8080;
+    public static String CMD = "0";
+    NetworkService networkService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_window);
+        networkService = ApplicationController.getInstance().getNetworkService();
 
         //툴바 관련
         window_toolbar = (Toolbar) findViewById(R.id.window_toolbar);
@@ -48,6 +73,38 @@ public class WindowActivity extends AppCompatActivity {
 
         }
 
+        //창문 툴바
+        window_status_switch = (Switch) findViewById(R.id.window_status_btn);
+        window_status_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    // The toggle is enabled
+                    CMD = "1";
+                    Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
+                    cmd_increase_servo.execute();
+
+                    Call<PostWindowStatusResponse> PostWindowStatusResponseCall = networkService.postWindowStatus();
+                    PostWindowStatusResponseCall.enqueue(new Callback<PostWindowStatusResponse>() {
+                        @Override
+                        public void onResponse(Call<PostWindowStatusResponse> call, Response<PostWindowStatusResponse> response) {
+                            Log.d("WINDOW_RESPONSE_TEST",String.valueOf(response.body()));
+                            Toast.makeText(getApplicationContext(),String.valueOf(response.body().responseMessage),Toast.LENGTH_SHORT);
+                        }
+
+                        @Override
+                        public void onFailure(Call<PostWindowStatusResponse> call, Throwable t) {
+
+                        }
+                    });
+
+                } else {
+                    // The toggle is disabled
+                    CMD = "0";
+                    Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
+                    cmd_increase_servo.execute();
+                }
+            }
+        });
 
     }
 
@@ -60,6 +117,32 @@ public class WindowActivity extends AppCompatActivity {
         return true;
     }
 
+    //소켓
+    public class Socket_AsyncTask extends AsyncTask<Void,Void,Void>
+    {
+        Socket socket;
+
+        @Override
+        protected Void doInBackground(Void... params){
+            try{
+                InetAddress inetAddress = InetAddress.getByName(WindowActivity.wifiModuleIp);
+                socket = new java.net.Socket(inetAddress,WindowActivity.wifiModulePort);
+                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                dataOutputStream.writeBytes(CMD);
+//                dataOutputStream.writeUTF(CMD);
+                dataOutputStream.flush();
+                dataOutputStream.close();
+
+
+
+                Log.d("DATA:: ",CMD.toString());
+                socket.close();
+            }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
+            return null;
+        }
+    }
+
+    /////날씨 크롤링
     // 네트워크 작업은 AsyncTask 를 사용
     public class WeatherConnection extends AsyncTask<String, String, String>{
 
