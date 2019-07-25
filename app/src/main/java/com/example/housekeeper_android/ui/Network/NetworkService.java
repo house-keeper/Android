@@ -1,5 +1,6 @@
 package com.example.housekeeper_android.ui.Network;
 
+import com.example.housekeeper_android.ui.Network.Get.GetRecordListResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetWindowStatusResponse;
 import com.example.housekeeper_android.ui.Network.Post.PostRecordFileResponse;
 import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusRequest;
@@ -20,6 +21,9 @@ import retrofit2.http.Path;
 
 public interface NetworkService {
 
+    // 녹음 상용구 가져오기
+    @GET("setting/record")
+    Call<GetRecordListResponse> getRecordList();
 
     // 녹음 상용구 추가
     @Multipart
