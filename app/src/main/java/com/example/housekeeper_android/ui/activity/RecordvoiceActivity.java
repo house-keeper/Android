@@ -10,6 +10,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +19,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
+import com.example.housekeeper_android.ui.Adapter.RecordRVAdapter;
 import com.example.housekeeper_android.ui.Network.ApplicationController;
+import com.example.housekeeper_android.ui.Network.Get.GetRecordListResponse;
 import com.example.housekeeper_android.ui.Network.NetworkService;
 import com.example.housekeeper_android.ui.Network.Post.PostRecordFileResponse;
 
@@ -50,6 +54,11 @@ public class RecordvoiceActivity extends AppCompatActivity {
     boolean isRecording = false;
     boolean isPlaying = false;
 
+
+    RecyclerView rvRecord;
+    RecordRVAdapter recordRVAdapter;
+
+
     NetworkService networkService;
 
     @Override
@@ -66,6 +75,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
         mRecorder = new MediaRecorder();
 
 
+        initRecordList(); // 녹음리스트 불러오기
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +86,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
                 RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
                MultipartBody.Part uploadFile = MultipartBody.Part.createFormData("file","test.mp4", requestFile);
 
-                Call<PostRecordFileResponse> postRecordFileResponseCall = networkService.postRecordFile(null,fileName);
+                Call<PostRecordFileResponse> postRecordFileResponseCall = networkService.postRecordFile(uploadFile,fileName);
                 postRecordFileResponseCall.enqueue(new Callback<PostRecordFileResponse>() {
                     @Override
                     public void onResponse(Call<PostRecordFileResponse> call, Response<PostRecordFileResponse> response) {
@@ -162,6 +172,29 @@ public class RecordvoiceActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void initRecordList(){
+
+        rvRecord = (RecyclerView)findViewById(R.id.rvRecordList);
+
+        Call<GetRecordListResponse> getRecordListResponseCall = networkService.getRecordList();
+        getRecordListResponseCall.enqueue(new Callback<GetRecordListResponse>() {
+            @Override
+            public void onResponse(Call<GetRecordListResponse> call, Response<GetRecordListResponse> response) {
+                Log.d("RESPONSE_TEST",String.valueOf(response.body()));
+                recordRVAdapter = new RecordRVAdapter(response.body().result);
+                rvRecord.setAdapter(recordRVAdapter);
+                rvRecord.setLayoutManager(new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false));
+                rvRecord.setHasFixedSize(true);
+
+            }
+
+            @Override
+            public void onFailure(Call<GetRecordListResponse> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),"FAIL",Toast.LENGTH_SHORT);
+            }
+        });
     }
 
 }
