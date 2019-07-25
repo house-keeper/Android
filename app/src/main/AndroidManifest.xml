@@ -22,12 +22,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true"
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.activity.IPTestActivity">
 
         </activity>
         <activity android:name=".ui.activity.WifiTestActivity">
-
         </activity>
         <activity android:name=".ui.activity.RecordvoiceActivity">
         </activity>
@@ -35,11 +36,11 @@
         <activity android:name=".ui.activity.HomeActivity" />
         <activity android:name=".ui.activity.RecordActivity" />
         <activity android:name=".ui.activity.WindowActivity">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.activity.DoorActivity"
