@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tvRecordFileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:text="누구세요?"
+        android:textSize="20dp"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true">
+        <Button
+            android:id="@+id/btnRecordListen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="듣기"
+            />
+        <Button
+            android:id="@+id/btnRecordDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="삭제"
+            android:layout_toRightOf="@id/btnRecordListen"
+            />
+
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>
