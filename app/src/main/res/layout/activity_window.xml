@@ -17,6 +17,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="530dp"
+        android:layout_weight="1"
         android:background="@drawable/weather_background"
         android:orientation="vertical">
 
@@ -64,6 +65,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="5"
         android:background="#bbf7f6">
 
         <TextView

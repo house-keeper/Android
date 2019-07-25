@@ -84,16 +84,17 @@ public class WindowActivity extends AppCompatActivity {
         GetWindowStatusResponseCall.enqueue(new Callback<GetWindowStatusResponse>() {
             @Override
             public void onResponse(Call<GetWindowStatusResponse> call, Response<GetWindowStatusResponse> response) {
-                Log.d("WINDOW_RESPONSE_TEST",String.valueOf(response.body()));
-//                Toast.makeText(getApplicationContext(),String.valueOf(response.body().responseMessage),Toast.LENGTH_SHORT);
+                Log.d("WINDOW_RESPONSE_TEST",String.valueOf(response.body().getResult().getw_status()));
+                Toast.makeText(getApplicationContext(),String.valueOf(response.body().message),Toast.LENGTH_SHORT);
 
-                if(Integer.valueOf(response.body().result) == 1){
+                if(response.body().getResult().getw_status() == 1){
                     window_status_text.setText("열림");
                     window_status_switch.setChecked(true);
-                    Log.d("창문값절달: ","window open");
-                }else if(response.body().result== 0){
+                    Log.d("창문초기값1 ","window opened");
+                }else if(response.body().getResult().getw_status()== 0){
                     window_status_text.setText("닫힘");
                     window_status_switch.setChecked(false);
+                    Log.d("창문초기값2 ","window closed");
                 }
 
             }
@@ -115,6 +116,7 @@ public class WindowActivity extends AppCompatActivity {
                     CMD = "1";
                     Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
                     cmd_increase_servo.execute();
+                    window_status_text.setText("열림");
 
 /**
                     // TODO: 창문 값 바꿔줘야함
@@ -133,9 +135,10 @@ public class WindowActivity extends AppCompatActivity {
                     });
  **/
 
-                } else if(isChecked){
+                } else if(!isChecked){
                     // The toggle is disabled
                     CMD = "0";
+                    window_status_text.setText("닫힘");
                     Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
                     cmd_increase_servo.execute();
                 }
