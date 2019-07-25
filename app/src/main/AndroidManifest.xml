@@ -34,7 +34,9 @@
         </activity>
         <activity android:name=".ui.activity.SettingActivity" />
         <activity android:name=".ui.activity.HomeActivity" />
-        <activity android:name=".ui.activity.RecordActivity" />
+        <activity android:name=".ui.activity.RecordActivity">
+
+        </activity>
         <activity android:name=".ui.activity.WindowActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

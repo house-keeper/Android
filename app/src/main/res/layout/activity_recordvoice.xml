@@ -41,7 +41,7 @@
             android:text="녹음할 음성 파일명"/>
 
         <EditText
-            android:id="@+id/txtFileName"
+            android:id="@+id/etFileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="문 앞에 놔주세요."/>

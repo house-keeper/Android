@@ -8,6 +8,7 @@ import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusResponse;
 import org.json.JSONObject;
 
 import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -18,10 +19,14 @@ import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface NetworkService {
+
+
+    // 녹음 상용구 추가
     @Multipart
     @POST("setting/record")
     Call<PostRecordFileResponse> postRecordFile(
-            @Part MultipartBody.Part file);
+            @Part MultipartBody.Part file,
+            @Part("fileName") RequestBody fileName);
 
     @GET("window/status")
     Call<GetWindowStatusResponse> getWindowStatus(
