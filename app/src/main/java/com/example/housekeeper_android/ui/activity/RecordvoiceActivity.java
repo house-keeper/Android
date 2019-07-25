@@ -41,7 +41,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
     Button btnRecord;
     Button btnPlay;
     Button btnSave;
-    EditText txtFileName;
+    EditText etFilename;
     MediaRecorder mRecorder=null;
     MediaPlayer mPlayer=null;
     String fileName=""; //
@@ -62,7 +62,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
         btnRecord = (Button)findViewById(R.id.btnRecord);
         btnPlay = (Button)findViewById(R.id.btnPlay);
         btnSave = (Button)findViewById(R.id.btnSave);
-        txtFileName = (EditText)findViewById(R.id.txtFileName);
+        etFilename = (EditText)findViewById(R.id.etFileName);
         mRecorder = new MediaRecorder();
 
 
@@ -71,10 +71,12 @@ public class RecordvoiceActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 File file = new File(mPath);
-               RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
+                RequestBody fileName = RequestBody.create(MediaType.parse("text/pain"), etFilename.getText().toString());
+
+                RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),file);
                MultipartBody.Part uploadFile = MultipartBody.Part.createFormData("file","test.mp4", requestFile);
 
-                Call<PostRecordFileResponse> postRecordFileResponseCall = networkService.postRecordFile(uploadFile);
+                Call<PostRecordFileResponse> postRecordFileResponseCall = networkService.postRecordFile(null,fileName);
                 postRecordFileResponseCall.enqueue(new Callback<PostRecordFileResponse>() {
                     @Override
                     public void onResponse(Call<PostRecordFileResponse> call, Response<PostRecordFileResponse> response) {
@@ -84,7 +86,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<PostRecordFileResponse> call, Throwable t) {
-
+                        Toast.makeText(getApplicationContext(),"FAIL",Toast.LENGTH_SHORT);
                     }
                 });
             }
@@ -148,7 +150,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        fileName = txtFileName.getText().toString();
+        fileName = etFilename.getText().toString();
 
 
        mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+fileName+".mp4";

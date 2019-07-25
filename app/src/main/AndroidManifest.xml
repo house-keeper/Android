@@ -30,16 +30,19 @@
 
         </activity>
         <activity android:name=".ui.activity.RecordvoiceActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".ui.activity.SettingActivity" />
         <activity android:name=".ui.activity.HomeActivity" />
-        <activity android:name=".ui.activity.RecordActivity" />
-        <activity android:name=".ui.activity.WindowActivity">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".ui.activity.RecordActivity">
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+        </activity>
+        <activity android:name=".ui.activity.WindowActivity">
+
         </activity>
         <activity
             android:name=".ui.activity.DoorActivity"
