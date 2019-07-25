@@ -78,7 +78,7 @@ public class WifiTestActivity extends AppCompatActivity {
     Button btnDown;
     EditText txtAddress;
     Socket myAppSocket = null;
-    public static String wifiModuleIp = "172.20.10.13";
+    public static String wifiModuleIp = "192.168.0.28";
     public static int wifiModulePort = 8080;
     public static String CMD = "0";
 

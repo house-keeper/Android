@@ -15,14 +15,18 @@ import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
 import com.example.housekeeper_android.ui.Network.ApplicationController;
+import com.example.housekeeper_android.ui.Network.Get.GetWindowStatusResponse;
 import com.example.housekeeper_android.ui.Network.NetworkService;
 import com.example.housekeeper_android.ui.Network.Post.PostRecordFileResponse;
+import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusRequest;
 import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusResponse;
 
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.w3c.dom.Text;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -38,7 +42,8 @@ public class WindowActivity extends AppCompatActivity {
 
     Toolbar window_toolbar;
     Switch window_status_switch;
-    public static String wifiModuleIp = "172.20.10.13";
+    TextView window_status_text;
+    public static String wifiModuleIp = "192.168.0.28";
     public static int wifiModulePort = 8080;
     public static String CMD = "0";
     NetworkService networkService;
@@ -73,6 +78,34 @@ public class WindowActivity extends AppCompatActivity {
 
         }
 
+       window_status_text=(TextView)findViewById(R.id.window_status);
+        //창문 열/닫 값 get
+        Call<GetWindowStatusResponse> GetWindowStatusResponseCall = networkService.getWindowStatus();
+        GetWindowStatusResponseCall.enqueue(new Callback<GetWindowStatusResponse>() {
+            @Override
+            public void onResponse(Call<GetWindowStatusResponse> call, Response<GetWindowStatusResponse> response) {
+                Log.d("WINDOW_RESPONSE_TEST",String.valueOf(response.body()));
+//                Toast.makeText(getApplicationContext(),String.valueOf(response.body().responseMessage),Toast.LENGTH_SHORT);
+
+                if(Integer.valueOf(response.body().result) == 1){
+                    window_status_text.setText("열림");
+                    window_status_switch.setChecked(true);
+                    Log.d("창문값절달: ","window open");
+                }else if(response.body().result== 0){
+                    window_status_text.setText("닫힘");
+                    window_status_switch.setChecked(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<GetWindowStatusResponse> call, Throwable t) {
+
+            }
+        });
+
+        Log.d("호출테스트: ","onCreate");
+
         //창문 툴바
         window_status_switch = (Switch) findViewById(R.id.window_status_btn);
         window_status_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -83,7 +116,9 @@ public class WindowActivity extends AppCompatActivity {
                     Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
                     cmd_increase_servo.execute();
 
-                    Call<PostWindowStatusResponse> PostWindowStatusResponseCall = networkService.postWindowStatus();
+/**
+                    // TODO: 창문 값 바꿔줘야함
+                    Call<PostWindowStatusResponse> PostWindowStatusResponseCall = networkService.postWindowStatus(new PostWindowStatusRequest(1));
                     PostWindowStatusResponseCall.enqueue(new Callback<PostWindowStatusResponse>() {
                         @Override
                         public void onResponse(Call<PostWindowStatusResponse> call, Response<PostWindowStatusResponse> response) {
@@ -96,8 +131,9 @@ public class WindowActivity extends AppCompatActivity {
 
                         }
                     });
+ **/
 
-                } else {
+                } else if(isChecked){
                     // The toggle is disabled
                     CMD = "0";
                     Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
@@ -132,7 +168,6 @@ public class WindowActivity extends AppCompatActivity {
 //                dataOutputStream.writeUTF(CMD);
                 dataOutputStream.flush();
                 dataOutputStream.close();
-
 
 
                 Log.d("DATA:: ",CMD.toString());
