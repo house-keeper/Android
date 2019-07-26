@@ -3,14 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.dummy.RecordDoorFragment">
+    tools:context=".ui.Fragment.RecordDoorFragment">
 
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvDoorRecord"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/record_door_listview">
+        android:layout_alignBottom="@id/record_toolbar"
+        >
 
-    </ListView>
+    </android.support.v7.widget.RecyclerView>
 
 </FrameLayout>

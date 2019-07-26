@@ -10,8 +10,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.Button;
 
 import com.example.housekeeper_android.R;
-import com.example.housekeeper_android.ui.fragment.dummy.RecordDoorFragment;
-import com.example.housekeeper_android.ui.fragment.dummy.RecordWindowFragment;
+import com.example.housekeeper_android.ui.Fragment.RecordDoorFragment;
+import com.example.housekeeper_android.ui.Fragment.RecordWindowFragment;
 
 public class RecordActivity extends AppCompatActivity implements View.OnClickListener{
 

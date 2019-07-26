@@ -13,11 +13,11 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/ivDoorRecordPhoto"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginLeft="5dp"
             android:padding="10dp"
-            android:id="@+id/record_door_img"
             android:src="@drawable/yungmin"/>
 
         <LinearLayout
@@ -28,17 +28,17 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvDoorRecordStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="현관문이 열렸습니다."
-                android:id="@+id/record_door_status"
                 android:textSize="18sp"/>
 
             <TextView
+                android:id="@+id/tvDoorRecordTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:id="@+id/record_door_date"
                 android:text="2019-04-10 18:31:04"/>
 
 
