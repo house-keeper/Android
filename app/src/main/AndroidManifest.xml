@@ -31,7 +31,8 @@
         </activity>
         <activity android:name=".ui.activity.WifiTestActivity">
         </activity>
-        <activity android:name=".ui.activity.RecordvoiceActivity">
+        <activity android:name=".ui.activity.RecordvoiceActivity"
+            android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

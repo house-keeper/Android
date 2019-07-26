@@ -1,5 +1,6 @@
 package com.example.housekeeper_android.ui.Network;
 
+import com.example.housekeeper_android.ui.Network.Delete.DeleteRecordResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetRecordListResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetWindowStatusResponse;
 import com.example.housekeeper_android.ui.Network.Post.PostRecordFileResponse;
@@ -12,6 +13,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -24,6 +26,11 @@ public interface NetworkService {
     // 녹음 상용구 가져오기
     @GET("setting/record")
     Call<GetRecordListResponse> getRecordList();
+
+    // 녹음 상용구 삭제
+    @DELETE("setting/record/{idx}")
+    Call<DeleteRecordResponse> deleteRecord(
+            @Path("idx") Integer idx);
 
     // 녹음 상용구 추가
     @Multipart

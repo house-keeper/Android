@@ -14,6 +14,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -74,7 +75,6 @@ public class RecordvoiceActivity extends AppCompatActivity {
         etFilename = (EditText)findViewById(R.id.etFileName);
         mRecorder = new MediaRecorder();
 
-
         initRecordList(); // 녹음리스트 불러오기
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +92,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
                     public void onResponse(Call<PostRecordFileResponse> call, Response<PostRecordFileResponse> response) {
                         Log.d("RESPONSE_TEST",String.valueOf(response.body()));
                         Toast.makeText(getApplicationContext(),String.valueOf(response.body().message),Toast.LENGTH_SHORT);
+                        recordRVAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -113,6 +114,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
                     btnRecord.setText("멈추기");
                 } else {
                     mRecorder.stop();
+                    mRecorder.release();
 
                     isRecording = false;
                     btnRecord.setText("녹음하기");
@@ -183,7 +185,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<GetRecordListResponse> call, Response<GetRecordListResponse> response) {
                 Log.d("RESPONSE_TEST",String.valueOf(response.body()));
-                recordRVAdapter = new RecordRVAdapter(response.body().result);
+                recordRVAdapter = new RecordRVAdapter(getBaseContext(),response.body().result);
                 rvRecord.setAdapter(recordRVAdapter);
                 rvRecord.setLayoutManager(new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL, false));
                 rvRecord.setHasFixedSize(true);
