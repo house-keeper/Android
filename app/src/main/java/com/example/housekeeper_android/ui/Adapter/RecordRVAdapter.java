@@ -1,8 +1,10 @@
 package com.example.housekeeper_android.ui.Adapter;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,15 +12,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
 import com.example.housekeeper_android.ui.Data.RecordData;
+import com.example.housekeeper_android.ui.Network.ApplicationController;
+import com.example.housekeeper_android.ui.Network.Delete.DeleteRecordResponse;
+import com.example.housekeeper_android.ui.Network.Get.GetRecordListResponse;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RecordRVAdapter extends RecyclerView.Adapter<RecordRVAdapter.ViewHolder> {
 
     ArrayList<RecordData> dataList;
+    Context ctx;
 
     public class IsPlaying{
         boolean isPlaying;
@@ -26,7 +37,8 @@ public class RecordRVAdapter extends RecyclerView.Adapter<RecordRVAdapter.ViewHo
         public boolean isPlaying() { return isPlaying; }
         public void setPlaying(boolean playing) { isPlaying = playing; }
     }
-    public RecordRVAdapter(ArrayList<RecordData> dataList) {
+    public RecordRVAdapter(Context ctx, ArrayList<RecordData> dataList) {
+        this.ctx = ctx;
         this.dataList = dataList;
     }
 
@@ -78,6 +90,27 @@ public class RecordRVAdapter extends RecyclerView.Adapter<RecordRVAdapter.ViewHo
                 viewHolder.btnRecordListen.setText("듣기");
             }
         });
+
+        viewHolder.btnRecordDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Call<DeleteRecordResponse> deleteRecordResponseCall = ApplicationController.getInstance().getNetworkService().deleteRecord(dataList.get(position).idx);
+                deleteRecordResponseCall.enqueue(new Callback<DeleteRecordResponse>() {
+                    @Override
+                    public void onResponse(Call<DeleteRecordResponse> call, Response<DeleteRecordResponse> response) {
+                        Log.d("RESPONSE_TEST",String.valueOf(response.body()));
+                       // Toast.makeText(ctx,"삭제가 완료되었습니다.",Toast.LENGTH_SHORT);
+                        Log.d("TESTTEST","삭제완료");
+                        notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onFailure(Call<DeleteRecordResponse> call, Throwable t) {
+                        Toast.makeText(ctx,"Delete FAIL.",Toast.LENGTH_SHORT);
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -88,11 +121,13 @@ public class RecordRVAdapter extends RecyclerView.Adapter<RecordRVAdapter.ViewHo
     static class ViewHolder extends RecyclerView.ViewHolder{
         TextView recordFileName;
         Button btnRecordListen;
+        Button btnRecordDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             recordFileName = (TextView)itemView.findViewById(R.id.tvRecordFileName);
             btnRecordListen = (Button)itemView.findViewById(R.id.btnRecordListen);
+            btnRecordDelete = (Button)itemView.findViewById(R.id.btnRecordDelete);
         }
     }
 }
