@@ -33,15 +33,16 @@
         </activity>
         <activity android:name=".ui.activity.RecordvoiceActivity"
             android:windowSoftInputMode="stateAlwaysHidden">
+
+        </activity>
+        <activity android:name=".ui.activity.SettingActivity" />
+        <activity android:name=".ui.activity.HomeActivity" />
+        <activity android:name=".ui.activity.RecordActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".ui.activity.SettingActivity" />
-        <activity android:name=".ui.activity.HomeActivity" />
-        <activity android:name=".ui.activity.RecordActivity">
 
         </activity>
         <activity android:name=".ui.activity.WindowActivity">
@@ -50,6 +51,7 @@
         <activity
             android:name=".ui.activity.DoorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+
     </application>
 
 </manifest>
