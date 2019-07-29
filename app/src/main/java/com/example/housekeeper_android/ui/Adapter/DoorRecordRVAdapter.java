@@ -3,6 +3,7 @@ package com.example.housekeeper_android.ui.Adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ import com.example.housekeeper_android.ui.Data.RecordData;
 
 import java.util.ArrayList;
 
-public class DoorRecordRVAdapter  extends RecyclerView.Adapter<DoorRecordRVAdapter.ViewHolder> {
+public class DoorRecordRVAdapter extends RecyclerView.Adapter<DoorRecordRVAdapter.ViewHolder> {
 
    ArrayList<DoorRecordData> dataList;
    Context ctx;
@@ -38,6 +39,7 @@ public class DoorRecordRVAdapter  extends RecyclerView.Adapter<DoorRecordRVAdapt
 
    @Override
    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+      Log.d("IMGTEST:: ",dataList.get(position).photo.toString());
       Glide.with(ctx).load(dataList.get(position).photo).into(viewHolder.ivDoorRecordPhoto);
 
       if(dataList.get(position).status == 1) viewHolder.tvDoorRecordStatus.setText("현관문이 열렸습니다.");

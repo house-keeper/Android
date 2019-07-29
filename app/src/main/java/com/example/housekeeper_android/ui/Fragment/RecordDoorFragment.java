@@ -2,6 +2,7 @@ package com.example.housekeeper_android.ui.Fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,7 +35,7 @@ public class RecordDoorFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_record_door, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_record_door, container, false);
 
         rvDoorRecord = (RecyclerView)rootView.findViewById(R.id.rvDoorRecord);
 
@@ -42,11 +43,11 @@ public class RecordDoorFragment extends Fragment {
         getDoorRecordResponseCall.enqueue(new Callback<GetDoorRecordResponse>() {
             @Override
             public void onResponse(Call<GetDoorRecordResponse> call, Response<GetDoorRecordResponse> response) {
-                Log.d("RESPONSE_TEST",String.valueOf(response.body()));
-                doorRecordRVAdapter = new DoorRecordRVAdapter(getContext(),response.body().result);
-                rvDoorRecord.setAdapter(doorRecordRVAdapter);
-                rvDoorRecord.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+                Log.d("RESPONSE_TEST",response.body().result.get(0).toString());
+                doorRecordRVAdapter = new DoorRecordRVAdapter(rootView.getContext(),response.body().result);
+                rvDoorRecord.setLayoutManager(new LinearLayoutManager(rootView.getContext(), RecyclerView.VERTICAL, false));
                 rvDoorRecord.setHasFixedSize(true);
+                rvDoorRecord.setAdapter(doorRecordRVAdapter);
             }
 
             @Override

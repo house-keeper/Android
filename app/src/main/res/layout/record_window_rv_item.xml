@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
@@ -22,12 +22,14 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tvWindowRecordStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="창문이 열렸습니다."
                 android:textSize="18sp"/>
 
             <TextView
+                android:id="@+id/tvWindowRecordTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"

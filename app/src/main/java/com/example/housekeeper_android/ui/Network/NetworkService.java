@@ -3,6 +3,7 @@ package com.example.housekeeper_android.ui.Network;
 import com.example.housekeeper_android.ui.Network.Delete.DeleteRecordResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetDoorRecordResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetRecordListResponse;
+import com.example.housekeeper_android.ui.Network.Get.GetWindowRecordResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetWindowStatusResponse;
 import com.example.housekeeper_android.ui.Network.Post.PostRecordFileResponse;
 import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusRequest;
@@ -43,6 +44,12 @@ public interface NetworkService {
     // 현관 기록 가져오기
     @GET("repository/door")
     Call<GetDoorRecordResponse> getDoorRecordResponse(
+
+    );
+
+    // 창문 기록 가져오기
+    @GET("repository/window")
+    Call<GetWindowRecordResponse> getWindowRecordResponse(
 
     );
 
