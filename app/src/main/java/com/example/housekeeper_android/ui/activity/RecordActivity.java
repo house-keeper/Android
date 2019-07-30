@@ -1,17 +1,25 @@
 package com.example.housekeeper_android.ui.activity;
 
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
+import com.example.housekeeper_android.ui.Adapter.DoorRecordRVAdapter;
 import com.example.housekeeper_android.ui.Fragment.RecordDoorFragment;
 import com.example.housekeeper_android.ui.Fragment.RecordWindowFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 public class RecordActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -25,6 +33,23 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("Firebase Status", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        Log.d("Firebase ","FCM token: "+ token.toString());
+                    }
+                });
 
         //툴바 관련
         record_toolbar = (Toolbar) findViewById(R.id.record_toolbar);
