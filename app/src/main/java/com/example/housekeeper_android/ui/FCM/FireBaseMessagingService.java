@@ -1,5 +1,6 @@
 package com.example.housekeeper_android.ui.FCM;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,10 +9,12 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.housekeeper_android.ui.activity.DoorActivity;
+import com.example.housekeeper_android.ui.etc.PushWakeLock;
 import com.google.firebase.*;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -38,6 +41,13 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
 
     }
 
+    private void screenOn(){
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        if (!pm.isScreenOn()) {
+            PushWakeLock.acquireCpuWakeLock(getApplicationContext());
+            PushWakeLock.releaseCpuLock();
+        }
+    }
     
     private void sendNotification(String title, String body){
         Intent intent = new Intent(this, DoorActivity.class);
@@ -52,13 +62,15 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
 
 //        String channelId = getString(R.string.);
 
+        screenOn();
+
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         NotificationCompat.Builder notificationBuilder =
 
                 new NotificationCompat.Builder(this, "블라블라")
 
-                        .setSmallIcon(R.drawable.ic_launcher_foreground)
+                        .setSmallIcon(R.drawable.bar_button_alarm)
 
                         .setContentTitle(title)
 
@@ -67,6 +79,8 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
                         .setAutoCancel(true)
 
                         .setSound(defaultSoundUri)
+                        .setDefaults(Notification.DEFAULT_VIBRATE)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
                         .setContentIntent(pendingIntent);
 
