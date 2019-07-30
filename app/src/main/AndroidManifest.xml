@@ -52,6 +52,7 @@
             android:name=".ui.activity.DoorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
 
+
     </application>
 
 </manifest>
