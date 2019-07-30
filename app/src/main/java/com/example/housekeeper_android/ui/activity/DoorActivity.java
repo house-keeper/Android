@@ -45,6 +45,10 @@ public class DoorActivity extends AppCompatActivity {
 
     private WebView door_streaming;
 
+    public static String wifiModuleIp = "192.168.0.28";
+    public static int wifiModulePort = 8080;
+    public static String CMD = "0";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
