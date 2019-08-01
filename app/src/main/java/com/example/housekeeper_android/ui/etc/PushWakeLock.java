@@ -3,6 +3,7 @@ package com.example.housekeeper_android.ui.etc;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.os.PowerManager;
+import android.util.Log;
 
 public class PushWakeLock {
     private static PowerManager.WakeLock sCpuWakeLock;
@@ -14,7 +15,8 @@ public class PushWakeLock {
         if (sCpuWakeLock != null)
             return;
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        sCpuWakeLock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP, TAG);
+        Log.d("TESTTEST","acquireCpuWakeLock");
+        sCpuWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, TAG);
 
         sCpuWakeLock.acquire();
     }

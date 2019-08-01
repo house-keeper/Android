@@ -31,7 +31,10 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
+        screenOn();
+
         sendNotification(title, body);
+
 
     }
 
@@ -44,8 +47,11 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
     private void screenOn(){
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         if (!pm.isScreenOn()) {
+            Log.d("TESTTEST","screen is off -> on");
             PushWakeLock.acquireCpuWakeLock(getApplicationContext());
             PushWakeLock.releaseCpuLock();
+        }else{
+            Log.d("TESTTEST","screen is on -> off");
         }
     }
     
@@ -62,7 +68,6 @@ public class FireBaseMessagingService extends FirebaseMessagingService {
 
 //        String channelId = getString(R.string.);
 
-        screenOn();
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
