@@ -60,7 +60,7 @@
                 android:layout_marginTop="10dp"
                 android:textSize="18sp"
                 android:background="@null"
-                android:text="택배입니다." />
+                android:text="외부인 음성 녹음 중..." />
 
 
         </LinearLayout>
