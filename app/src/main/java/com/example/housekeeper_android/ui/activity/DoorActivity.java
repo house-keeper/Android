@@ -1,8 +1,10 @@
 package com.example.housekeeper_android.ui.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
@@ -25,9 +27,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Locale;
 
 import static android.media.audiofx.AudioEffect.ERROR;
@@ -44,6 +63,8 @@ public class DoorActivity extends AppCompatActivity {
     private TextToSpeech tts;
 
     private WebView door_streaming;
+    ServerSocket serverSocket;
+    public static String outsider_message="";
 
     public static String wifiModuleIp = "192.168.0.28";
     public static int wifiModulePort = 8080;
@@ -86,7 +107,14 @@ public class DoorActivity extends AppCompatActivity {
         });
         door_streaming.loadUrl("http://jsmjsm.iptime.org:8885/?action=stream");
 
-        //인터폰 외부인 텍스트
+        //dooractivity 들어오면 라즈베리에게 신호 전송
+        CMD = "1";
+        DoorActivity.Socket_AsyncTask cmd_increase_servo = new DoorActivity.Socket_AsyncTask();
+        cmd_increase_servo.execute();
+
+        //인터폰 외부인 텍스트 받기
+        Thread socketServerThread = new Thread(new SocketServerThread());
+        socketServerThread.start();
 
 
         //인터폰 사용자 입력 관련 // 사용자가 텍스트 창 누르면 텍스트 자동 초기화
@@ -101,25 +129,10 @@ public class DoorActivity extends AppCompatActivity {
             }
         });
 
-        //tts 객체 생성
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if(status != ERROR) {
-                    // 언어를 선택한다.
-                    tts.setLanguage(Locale.KOREAN);
-                }
-            }
-        });
-
-
         //인터폰 사용자 메세지 전송 관련
         interphone_send_message_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tts.speak(interphone_my_message.getText().toString(),TextToSpeech.QUEUE_FLUSH, null);
-              //  tts.speak(interphone_my_message, TextToSpeech.QUEUE_FLUSH, null);
-
             }
         });
 
@@ -131,6 +144,83 @@ public class DoorActivity extends AppCompatActivity {
         });
     }
 
+    ///////////////////////////////////////////////////////////////
+    private class SocketServerThread extends Thread {
+
+        static final int SocketServerPORT = 8080;
+        int count = 0;
+
+        @Override
+        public void run() {
+            try {
+                serverSocket = new ServerSocket(SocketServerPORT);
+/**
+                DoorActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        info.setText("I'm waiting here: "
+                                + serverSocket.getLocalPort());
+                    }
+                });
+ **/
+
+                while (true) {
+                    System.out.println("클라이언트 접속 대기 중...");
+                    Socket socket = serverSocket.accept();
+                    System.out.println(socket.getInetAddress() + "가 접속되었습니다.");
+
+                    BufferedReader bufferedReader =
+                            new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                    // 클라이언트로부터 메시지 입력받음
+                    outsider_message= bufferedReader.readLine();
+
+                    JsonParser parser = new JsonParser();
+                    final JsonElement element = parser.parse(outsider_message);
+
+
+                    DoorActivity.this.runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            interphone_outsider_message.setText(element.getAsJsonObject().get("text").getAsString()); //msg가 ui textview message 클라에서 받아온거
+                        }
+                    });
+
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
+    //////////////////////////////////////////////////////
+
+
+    public class Socket_AsyncTask extends AsyncTask<Void,Void,Void>
+    {
+        Socket socket;
+
+        @Override
+        protected Void doInBackground(Void... params){
+            try{
+                InetAddress inetAddress = InetAddress.getByName(DoorActivity.wifiModuleIp);
+                socket = new java.net.Socket(inetAddress,DoorActivity.wifiModulePort);
+                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                dataOutputStream.writeBytes(CMD);
+//                dataOutputStream.writeUTF(CMD);
+                dataOutputStream.flush();
+                dataOutputStream.close();
+                Log.d("DATA:: ",CMD.toString());
+                socket.close();
+            }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
+            return null;
+        }
+    }
+
     //ToolBar에 menu.xml을 인플레이트함
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -140,16 +230,19 @@ public class DoorActivity extends AppCompatActivity {
         return true;
     }
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // TTS 객체가 남아있다면 실행을 중지하고 메모리에서 제거한다.
-        if(tts != null){
-            tts.stop();
-            tts.shutdown();
-            tts = null;
+
+        if (serverSocket != null) {
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
 }
+
