@@ -42,6 +42,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -70,10 +71,15 @@ public class DoorActivity extends AppCompatActivity {
     public static int wifiModulePort = 8080;
     public static String CMD = "0";
 
+    Thread socketServerThread = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_door);
+
+        Log.d("생명주기: ","onCreate");
+
 
         door_toolbar = (Toolbar) findViewById(R.id.door_toolbar);
         door_streaming=(WebView)findViewById(R.id.door_webview);
@@ -113,7 +119,7 @@ public class DoorActivity extends AppCompatActivity {
         cmd_increase_servo.execute();
 
         //인터폰 외부인 텍스트 받기
-        Thread socketServerThread = new Thread(new SocketServerThread());
+        socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
 
 
@@ -147,26 +153,19 @@ public class DoorActivity extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////
     private class SocketServerThread extends Thread {
 
-        static final int SocketServerPORT = 8080;
+        static final int SocketServerPORT = 8885;
         int count = 0;
 
         @Override
         public void run() {
             try {
                 serverSocket = new ServerSocket(SocketServerPORT);
-/**
-                DoorActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        info.setText("I'm waiting here: "
-                                + serverSocket.getLocalPort());
-                    }
-                });
- **/
 
                 while (true) {
                     System.out.println("클라이언트 접속 대기 중...");
+                  //  serverSocket.bind(SocketServerPORT);
                     Socket socket = serverSocket.accept();
+                    Log.d("TESTTEST",socket.getInetAddress().toString());
                     System.out.println(socket.getInetAddress() + "가 접속되었습니다.");
 
                     BufferedReader bufferedReader =
@@ -178,15 +177,12 @@ public class DoorActivity extends AppCompatActivity {
                     JsonParser parser = new JsonParser();
                     final JsonElement element = parser.parse(outsider_message);
 
-
                     DoorActivity.this.runOnUiThread(new Runnable() {
-
                         @Override
                         public void run() {
-                            interphone_outsider_message.setText(element.getAsJsonObject().get("text").getAsString()); //msg가 ui textview message 클라에서 받아온거
+                          interphone_outsider_message.setText(element.getAsJsonObject().get("text").getAsString());
                         }
                     });
-
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -231,9 +227,8 @@ public class DoorActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
+    protected void onPause() {
+        super.onPause();
         if (serverSocket != null) {
             try {
                 serverSocket.close();
