@@ -239,5 +239,14 @@ public class DoorActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        CMD = "0";
+        DoorActivity.Socket_AsyncTask cmd_increase_servo = new DoorActivity.Socket_AsyncTask();
+        cmd_increase_servo.execute();
+    }
+
+
 }
 
