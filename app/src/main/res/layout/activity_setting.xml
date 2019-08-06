@@ -17,6 +17,7 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <RelativeLayout
+        android:id="@+id/rlGoAddressAcitivity"
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
@@ -38,6 +39,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rlGoRecordAcitivity"
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
@@ -58,26 +60,26 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp">
+    <!--<RelativeLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="60dp">-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="23dp"
-            android:layout_marginLeft="20dp"
-            android:text="" />
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="23dp"-->
+            <!--android:layout_marginLeft="20dp"-->
+            <!--android:text="" />-->
 
-        <Button
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginTop="23dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/setting_arrow_btn"/>
+        <!--<Button-->
+            <!--android:layout_width="20dp"-->
+            <!--android:layout_height="20dp"-->
+            <!--android:layout_marginTop="23dp"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_marginRight="15dp"-->
+            <!--android:background="@drawable/setting_arrow_btn"/>-->
 
-    </RelativeLayout>
+    <!--</RelativeLayout>-->
 
 
 </LinearLayout>

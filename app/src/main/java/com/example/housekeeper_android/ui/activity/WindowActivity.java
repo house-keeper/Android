@@ -1,6 +1,10 @@
 package com.example.housekeeper_android.ui.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -20,6 +25,7 @@ import com.example.housekeeper_android.ui.Network.NetworkService;
 import com.example.housekeeper_android.ui.Network.Post.PostRecordFileResponse;
 import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusRequest;
 import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusResponse;
+import com.example.housekeeper_android.ui.etc.SharedPrefrernceController;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -59,8 +65,8 @@ public class WindowActivity extends AppCompatActivity {
         window_toolbar = (Toolbar) findViewById(R.id.window_toolbar);
         setSupportActionBar(window_toolbar);
         getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.bar_button_return);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.bar_button_return);
 
         //
         TextView textView = (TextView)findViewById(R.id.weatherTv);
@@ -225,5 +231,26 @@ public class WindowActivity extends AppCompatActivity {
             }
             return null;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.door_menu_alarm:
+                if (SharedPrefrernceController.getAddress(this).length() == 0){
+                    Toast.makeText(this, "아직 주소를 저장하지 않았습니다. 설정에서 저장해주세요.", Toast.LENGTH_SHORT).show();
+                }else{
+                    Uri smsUri = Uri.parse("sms:"+"112");
+                    Intent sendIntent = new Intent(Intent.ACTION_SENDTO, smsUri);
+                    sendIntent.putExtra("sms_body", SharedPrefrernceController.getAddress(this)+" 여기에 지금 도둑이 들어왔어요 도와주세요");
+                    startActivity(sendIntent);
+                }
+                break;
+            case R.id.door_menu_record:
+                startActivity(new Intent(WindowActivity.this,RecordActivity.class));
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
