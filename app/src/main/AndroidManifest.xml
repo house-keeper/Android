@@ -35,6 +35,10 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+<<<<<<< HEAD
+=======
+
+>>>>>>> ab0f0801ee7dd91621d5bb4c880686a0f11a57e9
         </activity>
         <activity android:name=".ui.activity.RecordActivity"></activity>
         <activity android:name=".ui.activity.WindowActivity"></activity>
