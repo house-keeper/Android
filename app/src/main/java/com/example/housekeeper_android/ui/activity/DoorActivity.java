@@ -1,14 +1,19 @@
 package com.example.housekeeper_android.ui.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,13 +25,18 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
+import com.example.housekeeper_android.ui.Adapter.RecordRVAdapter;
+import com.example.housekeeper_android.ui.Network.ApplicationController;
+import com.example.housekeeper_android.ui.Network.Get.GetRecordListResponse;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -48,9 +58,15 @@ import java.net.SocketException;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.media.audiofx.AudioEffect.ERROR;
 
@@ -83,6 +99,8 @@ public class DoorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_door);
 
         Log.d("생명주기: ","onCreate");
+
+        Context ctx = this;
 
 
         door_toolbar = (Toolbar) findViewById(R.id.door_toolbar);
@@ -150,10 +168,66 @@ public class DoorActivity extends AppCompatActivity {
             }
         });
 
+        final ArrayList<Integer> recordIdxList = new ArrayList<>();
+
         //인터폰 음성녹음 전송 관련
         interphone_send_record_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
+                        DoorActivity.this);
+                alertBuilder.setIcon(R.drawable.mic);
+                alertBuilder.setTitle("전송할 녹음을 하나만 선택하세요.");
+
+                // List Adapter 생성
+                final ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                        DoorActivity.this,
+                        android.R.layout.simple_list_item_1);
+
+                Call<GetRecordListResponse> getRecordListResponseCall = ApplicationController.getInstance().getNetworkService().getRecordList();
+                getRecordListResponseCall.enqueue(new Callback<GetRecordListResponse>() {
+                    @Override
+                    public void onResponse(Call<GetRecordListResponse> call, Response<GetRecordListResponse> response) {
+                        Log.d("RESPONSE_TEST",response.body().result.toString());
+                        for(int i=0; i<response.body().result.size(); i++){
+                            adapter.add(response.body().result.get(i).fileName);
+                            recordIdxList.add(response.body().result.get(i).idx);
+                        }
+                        adapter.notifyDataSetChanged();
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<GetRecordListResponse> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(),"FAIL",Toast.LENGTH_SHORT);
+                    }
+                });
+
+                // 버튼 생성
+                alertBuilder.setNegativeButton("취소",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                dialog.dismiss();
+                            }
+                        });
+
+
+                alertBuilder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Integer recordIdx = recordIdxList.get(which);
+                        // TODO: 녹음 라즈베리파이에 보내기
+//                        Toast.makeText(DoorActivity.this, "성공적으로 전송되었습니다.", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(DoorActivity.this, "전송이 실패하였습니다.", Toast.LENGTH_SHORT).show();
+
+
+                    }
+                });
+
+
+                alertBuilder.show();
+
             }
         });
     }

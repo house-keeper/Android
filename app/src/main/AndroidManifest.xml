@@ -41,7 +41,6 @@
         <activity android:name=".ui.activity.RecordvoiceActivity"
             android:windowSoftInputMode="stateAlwaysHidden">
 
-
         </activity>
         <activity android:name=".ui.activity.SettingActivity" />
         <activity android:name=".ui.activity.HomeActivity" />
@@ -49,6 +48,7 @@
 
         </activity>
         <activity android:name=".ui.activity.WindowActivity">
+
 
         </activity>
         <activity
