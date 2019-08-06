@@ -33,6 +33,7 @@ import com.google.gson.JsonParser;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -44,6 +45,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -66,10 +68,12 @@ public class DoorActivity extends AppCompatActivity {
     private WebView door_streaming;
     ServerSocket serverSocket;
     public static String outsider_message="";
+    public static String rpi_confirm_message="";
 
     public static String wifiModuleIp = "192.168.0.28";
     public static int wifiModulePort = 8080;
     public static String CMD = "0";
+    public static String real_text = "";
 
     Thread socketServerThread = null;
 
@@ -115,8 +119,8 @@ public class DoorActivity extends AppCompatActivity {
 
         //dooractivity 들어오면 라즈베리에게 신호 전송
         CMD = "1";
-        DoorActivity.Socket_AsyncTask cmd_increase_servo = new DoorActivity.Socket_AsyncTask();
-        cmd_increase_servo.execute();
+        DoorActivity.Socket_AsyncTask rpi_connection_confirm = new DoorActivity.Socket_AsyncTask();
+        rpi_connection_confirm.execute();
 
         //인터폰 외부인 텍스트 받기
         socketServerThread = new Thread(new SocketServerThread());
@@ -139,6 +143,10 @@ public class DoorActivity extends AppCompatActivity {
         interphone_send_message_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                CMD ="tts";
+                real_text=interphone_my_message.getText().toString();
+                DoorActivity.Socket_AsyncTask tts_send_text = new DoorActivity.Socket_AsyncTask();
+               tts_send_text.execute();
             }
         });
 
@@ -206,11 +214,30 @@ public class DoorActivity extends AppCompatActivity {
                 InetAddress inetAddress = InetAddress.getByName(DoorActivity.wifiModuleIp);
                 socket = new java.net.Socket(inetAddress,DoorActivity.wifiModulePort);
                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                dataOutputStream.writeBytes(CMD);
-//                dataOutputStream.writeUTF(CMD);
+                dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
+              //  dataOutputStream.writeChars(CMD);
+            //    dataOutputStream.writeUTF(CMD);
+                Log.d("output",dataOutputStream.toString());
                 dataOutputStream.flush();
-                dataOutputStream.close();
+                //dataOutputStream.close();
                 Log.d("DATA:: ",CMD.toString());
+
+                //tts test
+                DataInputStream dis2 = new DataInputStream(socket.getInputStream());
+                InputStreamReader disR2 = new InputStreamReader(dis2);
+                BufferedReader br = new BufferedReader(disR2);//create a BufferReader object for input
+                rpi_confirm_message=br.readLine();
+                Log.d("fromrpi",rpi_confirm_message);
+
+                //tts connection success. send text
+                if (rpi_confirm_message=="2000"){
+                    Log.d("fromrpi","writing");
+                    dataOutputStream.writeBytes(URLEncoder.encode(real_text, "utf-8"));
+                    Log.d("output",dataOutputStream.toString());
+                    dataOutputStream.flush();
+                    dataOutputStream.close();
+                }
+                else dataOutputStream.close();
                 socket.close();
             }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
             return null;
