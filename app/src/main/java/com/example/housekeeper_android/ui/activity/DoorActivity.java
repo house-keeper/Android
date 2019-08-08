@@ -43,11 +43,14 @@ import com.google.gson.JsonParser;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -235,7 +238,7 @@ public class DoorActivity extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////
     private class SocketServerThread extends Thread {
 
-        static final int SocketServerPORT = 8885;
+        static final int SocketServerPORT = 8080;
         int count = 0;
 
         @Override
@@ -291,25 +294,35 @@ public class DoorActivity extends AppCompatActivity {
                 dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
               //  dataOutputStream.writeChars(CMD);
             //    dataOutputStream.writeUTF(CMD);
-                Log.d("output",dataOutputStream.toString());
+         //       Log.d("output",dataOutputStream.toString());
                 dataOutputStream.flush();
-                //dataOutputStream.close();
+               // dataOutputStream.close();
                 Log.d("DATA:: ",CMD.toString());
 
                 //tts test
-                DataInputStream dis2 = new DataInputStream(socket.getInputStream());
-                InputStreamReader disR2 = new InputStreamReader(dis2);
-                BufferedReader br = new BufferedReader(disR2);//create a BufferReader object for input
+                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                Log.d("data","here");
                 rpi_confirm_message=br.readLine();
-                Log.d("fromrpi",rpi_confirm_message);
+                Log.d("DATA::fromrpi",rpi_confirm_message);
+               // dis2.close();
 
                 //tts connection success. send text
-                if (rpi_confirm_message=="2000"){
-                    Log.d("fromrpi","writing");
-                    dataOutputStream.writeBytes(URLEncoder.encode(real_text, "utf-8"));
-                    Log.d("output",dataOutputStream.toString());
+                if (rpi_confirm_message.equals("send text")){
+                    Log.d("DATA::fromrpi","writing");
+
+                //    BufferedWriter bw = new BufferedWriter(
+                //            new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
+               //     bw.write(real_text+"\r\n");
+
+                    dataOutputStream.writeBytes(URLEncoder.encode(real_text, "UTF-8"));
+                  //  dataOutputStream.writeBytes(real_text);
+                    Log.d("DATA::output",real_text);
                     dataOutputStream.flush();
-                    dataOutputStream.close();
+                    Log.d("DATA::output2","flushed");
+                   // dataOutputStream.close();
+                }else if(rpi_confirm_message.equals("send address")){
+                    Log.d("DATA::fromrpi","address writing");
+
                 }
                 else dataOutputStream.close();
                 socket.close();
