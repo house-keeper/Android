@@ -37,9 +37,8 @@
             android:layout_weight="1"
             android:id="@+id/doorTab"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:background="@drawable/interphone_send_button_round"
+            android:layout_height="match_parent"
+            android:background="@drawable/fragment_button_selector"
             android:text="현관문"/>
 
         <Button
@@ -47,6 +46,7 @@
             android:id="@+id/windowTab"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@drawable/fragment_button_selector"
             android:text="창문"/>
 
     </LinearLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.AddressActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textAlignment="center"
+        android:textSize="18dp"
+        android:text="주소를 입력해주세요. 신고 시 기본 주소로 쓰입니다."
+        />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        >
+
+        <EditText
+            android:id="@+id/etAddress"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
+
+           />
+        <Button
+            android:id="@+id/btnSaveAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/etAddress"
+            android:text="저장"
+            android:background="@drawable/interphone_send_button_round"/>
+    </RelativeLayout>
+
+</LinearLayout>

@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
@@ -37,6 +39,7 @@ import com.example.housekeeper_android.R;
 import com.example.housekeeper_android.ui.Adapter.RecordRVAdapter;
 import com.example.housekeeper_android.ui.Network.ApplicationController;
 import com.example.housekeeper_android.ui.Network.Get.GetRecordListResponse;
+import com.example.housekeeper_android.ui.etc.SharedPrefrernceController;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -119,8 +122,8 @@ public class DoorActivity extends AppCompatActivity {
         //툴바 관련
         setSupportActionBar(door_toolbar);
         getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.bar_button_return);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.bar_button_return);
 
         //웹뷰 관련
         WebSettings mywebSetting=door_streaming.getSettings();//Mobile Web Setting
@@ -171,7 +174,7 @@ public class DoorActivity extends AppCompatActivity {
             }
         });
 
-        final ArrayList<Integer> recordIdxList = new ArrayList<>();
+        final ArrayList<String> recordFileList = new ArrayList<>();
 
         //인터폰 음성녹음 전송 관련
         interphone_send_record_btn.setOnClickListener(new View.OnClickListener() {
@@ -194,7 +197,7 @@ public class DoorActivity extends AppCompatActivity {
                         Log.d("RESPONSE_TEST",response.body().result.toString());
                         for(int i=0; i<response.body().result.size(); i++){
                             adapter.add(response.body().result.get(i).fileName);
-                            recordIdxList.add(response.body().result.get(i).idx);
+                            recordFileList.add(response.body().result.get(i).file);
                         }
                         adapter.notifyDataSetChanged();
 
@@ -219,7 +222,7 @@ public class DoorActivity extends AppCompatActivity {
                 alertBuilder.setAdapter(adapter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Integer recordIdx = recordIdxList.get(which);
+                        String recordFile = recordFileList.get(which);
                         // TODO: 녹음 라즈베리파이에 보내기
 //                        Toast.makeText(DoorActivity.this, "성공적으로 전송되었습니다.", Toast.LENGTH_SHORT).show();
 //                        Toast.makeText(DoorActivity.this, "전송이 실패하였습니다.", Toast.LENGTH_SHORT).show();
@@ -361,6 +364,25 @@ public class DoorActivity extends AppCompatActivity {
         cmd_increase_servo.execute();
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.door_menu_alarm:
+                if (SharedPrefrernceController.getAddress(this).length() == 0){
+                    Toast.makeText(this, "아직 주소를 저장하지 않았습니다. 설정에서 저장해주세요.", Toast.LENGTH_SHORT).show();
+                }else{
+                    Uri smsUri = Uri.parse("sms:"+"112");
+                    Intent sendIntent = new Intent(Intent.ACTION_SENDTO, smsUri);
+                    sendIntent.putExtra("sms_body", SharedPrefrernceController.getAddress(this)+" 여기에 지금 도둑이 들어왔어요 도와주세요");
+                    startActivity(sendIntent);
+                }
+                break;
+            case R.id.door_menu_record:
+                startActivity(new Intent(DoorActivity.this,RecordActivity.class));
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
 
