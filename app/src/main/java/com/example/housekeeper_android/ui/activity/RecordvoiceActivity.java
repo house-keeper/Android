@@ -92,8 +92,9 @@ public class RecordvoiceActivity extends AppCompatActivity {
                     public void onResponse(Call<PostRecordFileResponse> call, Response<PostRecordFileResponse> response) {
                         Log.d("RESPONSE_TEST",String.valueOf(response.body()));
                         if (response.isSuccessful()){
-                            Toast.makeText(getApplicationContext(),String.valueOf(response.body().message),Toast.LENGTH_SHORT);
-                            recordRVAdapter.notifyItemChanged(recordRVAdapter.getItemCount()+1);
+                            Toast.makeText(RecordvoiceActivity.this,"저장되었습니다.",Toast.LENGTH_SHORT);
+                            initRecordList();
+//                            recordRVAdapter.notifyItemChanged(recordRVAdapter.getItemCount()+1);
 //                            recordRVAdapter.notifyDataSetChanged();
                         }
                     }
