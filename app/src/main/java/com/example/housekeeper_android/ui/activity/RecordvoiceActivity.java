@@ -166,7 +166,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
 
 
        mPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+fileName+".mp4";
-      //  mPath = Context.getFilesDir().getAbsolutePath()
+      //  mPath = Context.getFilesDir().getAbsolutePath
         Log.d("RECORD_TEST", "file path is " + mPath);
         mRecorder.setOutputFile(mPath);
         try {

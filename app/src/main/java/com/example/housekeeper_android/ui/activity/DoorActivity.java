@@ -93,9 +93,13 @@ public class DoorActivity extends AppCompatActivity {
     public static String rpi_confirm_message="";
 
     public static String wifiModuleIp = "192.168.0.28";
-    public static int wifiModulePort = 8080;
+    public static int stt_connPort = 8885;
+    public static int tts_sendingPort = 8860;
+//    public static int  = 8864;
     public static String CMD = "0";
     public static String real_text = "";
+    public static String s3_address="";
+    public static String text ="";
 
     Thread socketServerThread = null;
 
@@ -223,10 +227,11 @@ public class DoorActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String recordFile = recordFileList.get(which);
+                        s3_address = recordFile;
                         // TODO: 녹음 라즈베리파이에 보내기
-//                        Toast.makeText(DoorActivity.this, "성공적으로 전송되었습니다.", Toast.LENGTH_SHORT).show();
-//                        Toast.makeText(DoorActivity.this, "전송이 실패하였습니다.", Toast.LENGTH_SHORT).show();
-
+                        CMD="s3address";
+                        DoorActivity.Socket_AsyncTask send_S3_address = new DoorActivity.Socket_AsyncTask();
+                        send_S3_address.execute();
 
                     }
                 });
@@ -241,7 +246,7 @@ public class DoorActivity extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////
     private class SocketServerThread extends Thread {
 
-        static final int SocketServerPORT = 8080;
+        static final int SocketServerPORT = 8881;
         int count = 0;
 
         @Override
@@ -292,42 +297,56 @@ public class DoorActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params){
             try{
                 InetAddress inetAddress = InetAddress.getByName(DoorActivity.wifiModuleIp);
-                socket = new java.net.Socket(inetAddress,DoorActivity.wifiModulePort);
-                DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
-              //  dataOutputStream.writeChars(CMD);
-            //    dataOutputStream.writeUTF(CMD);
-         //       Log.d("output",dataOutputStream.toString());
-                dataOutputStream.flush();
-               // dataOutputStream.close();
-                Log.d("DATA:: ",CMD.toString());
 
-                //tts test
-                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                Log.d("data","here");
-                rpi_confirm_message=br.readLine();
-                Log.d("DATA::fromrpi",rpi_confirm_message);
-               // dis2.close();
-
-                //tts connection success. send text
-                if (rpi_confirm_message.equals("send text")){
-                    Log.d("DATA::fromrpi","writing");
-
-                //    BufferedWriter bw = new BufferedWriter(
-                //            new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
-               //     bw.write(real_text+"\r\n");
-
-                    dataOutputStream.writeBytes(URLEncoder.encode(real_text, "UTF-8"));
-                  //  dataOutputStream.writeBytes(real_text);
-                    Log.d("DATA::output",real_text);
+                if(CMD.equals("tts") || CMD.equals("s3address")){
+                    socket = new java.net.Socket(inetAddress,DoorActivity.tts_sendingPort);
+                    DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                    dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
                     dataOutputStream.flush();
-                    Log.d("DATA::output2","flushed");
-                   // dataOutputStream.close();
-                }else if(rpi_confirm_message.equals("send address")){
-                    Log.d("DATA::fromrpi","address writing");
+                    Log.d("DATA:: ",CMD.toString());
 
+                    //tts && record send
+                    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    Log.d("data","here");
+                    rpi_confirm_message=br.readLine();
+                    Log.d("DATA::fromrpi",rpi_confirm_message);
+                    // dis2.close();
+
+                    //tts connection success. send text
+                    if (rpi_confirm_message.equals("send text")){
+                            Log.d("DATA::fromrpi","writing");
+          //                  text=URLEncoder.encode(real_text,"utf-8");
+                            dataOutputStream.writeBytes(URLEncoder.encode(real_text, "UTF-8"));
+                            Log.d("DATA::output",real_text);
+          //                 Log.d("DATA::encoded",text);
+                            dataOutputStream.flush();
+                            Log.d("DATA::output2","flushed");
+                            // dataOutputStream.close();
+                   // send record
+                    }else if(rpi_confirm_message.equals("send address")){
+                            Log.d("DATA::fromrpi","address writing");
+                            //    dataOutputStream.writeBytes(URLEncoder.encode(s3_address, "UTF-8"));
+                            dataOutputStream.writeBytes(s3_address);
+                            Log.d("DATA::output",s3_address);
+                            dataOutputStream.flush();
+                            Log.d("DATA::output2","flushed");
+             //               rpi_confirm_message=br.readLine();
+             //               if(rpi_confirm_message.equals("200")){
+            //                Toast.makeText(DoorActivity.this, "성공적으로 전송되었습니다.", Toast.LENGTH_SHORT).show();
+           //                 }
+
+                       //     Toast.makeText(DoorActivity.this, "전송이 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                    else dataOutputStream.close();
                 }
-                else dataOutputStream.close();
+                if(CMD == "0" || CMD == "1") {
+                    socket = new java.net.Socket(inetAddress, DoorActivity.stt_connPort);
+                    DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                    dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
+                    dataOutputStream.flush();
+                    Log.d("DATA:: ",CMD.toString());
+                    dataOutputStream.close();
+                }
                 socket.close();
             }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
             return null;

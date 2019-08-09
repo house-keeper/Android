@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#65b2f2"
-        android:elevation="4dp"
-        android:id="@+id/window_toolbar"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <LinearLayout
+        android:id="@+id/main_ui"
         android:layout_width="match_parent"
-        android:layout_height="530dp"
-        android:layout_weight="1"
-        android:background="@drawable/weather_background"
+        android:layout_height="wrap_content"
+        android:background="@drawable/weather_background_baise"
         android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/window_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/toolbar_tbg"
+            android:elevation="4dp"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="25dp"
-                android:layout_height="28dp"
+                android:layout_height="26dp"
                 android:background="@drawable/window_location_icon" />
 
             <TextView
@@ -40,17 +39,19 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:text="서울특별시 도봉구 쌍문동"
-                android:textSize="19dp" />
+                android:textColor="#ffffff"
+                android:textSize="16dp" />
 
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/weather_img"
             android:layout_width="180dp"
             android:layout_height="180dp"
             android:layout_gravity="center"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/weather_status_cloudy" />
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="25dp"
+            android:background="@drawable/weather_status_cloud" />
 
         <TextView
             android:id="@+id/weatherTv"
@@ -58,15 +59,48 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="16시 현재"
+            android:text="날씨 정보란"
+            android:textColor="#ffffff"
             android:textSize="18sp" />
+
     </LinearLayout>
 
     <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/next_weather"
+        android:background="#ffffff"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="다음 날씨" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:layout_toRightOf="@+id/next_weather">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="다다음 날씨"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="5"
-        android:background="#bbf7f6">
+        android:layout_height="wrap_content"
+        android:id="@+id/control_bar"
+        android:layout_alignParentBottom="true"
+        android:paddingTop="10dp"
+        android:paddingBottom="25dp"
+        android:background="#ffffff">
 
         <TextView
             android:id="@+id/window_s"
@@ -99,4 +133,4 @@
 
 
 
-</LinearLayout>
+</RelativeLayout>
