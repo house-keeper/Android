@@ -91,8 +91,11 @@ public class RecordvoiceActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<PostRecordFileResponse> call, Response<PostRecordFileResponse> response) {
                         Log.d("RESPONSE_TEST",String.valueOf(response.body()));
-                        Toast.makeText(getApplicationContext(),String.valueOf(response.body().message),Toast.LENGTH_SHORT);
-                        recordRVAdapter.notifyDataSetChanged();
+                        if (response.isSuccessful()){
+                            Toast.makeText(getApplicationContext(),String.valueOf(response.body().message),Toast.LENGTH_SHORT);
+                            recordRVAdapter.notifyItemChanged(recordRVAdapter.getItemCount()+1);
+//                            recordRVAdapter.notifyDataSetChanged();
+                        }
                     }
 
                     @Override
