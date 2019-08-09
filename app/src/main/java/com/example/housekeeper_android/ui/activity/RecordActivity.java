@@ -17,7 +17,9 @@ import android.widget.Toast;
 
 import com.example.housekeeper_android.R;
 import com.example.housekeeper_android.ui.Adapter.DoorRecordRVAdapter;
+import com.example.housekeeper_android.ui.Fragment.OutsiderDetailFragment;
 import com.example.housekeeper_android.ui.Fragment.RecordDoorFragment;
+import com.example.housekeeper_android.ui.Fragment.RecordOutsiderFragment;
 import com.example.housekeeper_android.ui.Fragment.RecordWindowFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -30,7 +32,8 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
 
     private final int FRAGMENT1 = 1;
     private final int FRAGMENT2 = 2;
-    private Button doortab, windowtab;
+    private final int FRAGMENT3 = 3;
+    private Button doortab, windowtab, outsidertab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,23 +67,45 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
         // 위젯에 대한 참조
         doortab = (Button)findViewById(R.id.doorTab); doortab.setSelected(true);
         windowtab = (Button)findViewById(R.id.windowTab); windowtab.setSelected(false);
+        outsidertab = (Button)findViewById(R.id.outsiderTab); outsidertab.setSelected(false);
         // 탭 버튼에 대한 리스너 연결
         doortab.setOnClickListener(this);
         windowtab.setOnClickListener(this);
+        outsidertab.setOnClickListener(this);
 
         // 임의로 액티비티 호출 시점에 어느 프레그먼트를 프레임레이아웃에 띄울 것인지를 정함
         callFragment(FRAGMENT1);
     }
 
 
-    //툴바에 menu.xml을 인플레이트함
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //return super.onCreateOptionsMenu(menu);
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.record_menu, menu);
-        return true;
-    }
+//    //툴바에 menu.xml을 인플레이트함
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        //return super.onCreateOptionsMenu(menu);
+//        MenuInflater menuInflater = getMenuInflater();
+//        menuInflater.inflate(R.menu.record_menu, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()){
+//            case R.id.record_menu_delete:
+//                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
+//                        RecordActivity.this);
+//                alertBuilder.setTitle("삭제하려면 기록을 스와이프 하세요. ");
+//                alertBuilder.setPositiveButton("확인",
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog,
+//                                                int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                alertBuilder.show();
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     @Override
@@ -89,6 +114,7 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.doorTab :
                 v.setSelected(true);
                 windowtab.setSelected(false);
+                outsidertab.setSelected(false);
 
                 // '버튼1' 클릭 시 '프래그먼트1' 호출
                 callFragment(FRAGMENT1);
@@ -97,9 +123,19 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.windowTab :
                 v.setSelected(true);
                 doortab.setSelected(false);
+                outsidertab.setSelected(false);
 
                 // '버튼2' 클릭 시 '프래그먼트2' 호출
                 callFragment(FRAGMENT2);
+                break;
+
+            case R.id.outsiderTab :
+                v.setSelected(true);
+                doortab.setSelected(false);
+                windowtab.setSelected(false);
+
+                // '버튼3' 클릭 시 '프래그먼트3' 호출
+                callFragment(FRAGMENT3);
                 break;
         }
     }
@@ -123,27 +159,24 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
                 transaction.replace(R.id.fragment_container, fragment2);
                 transaction.commit();
                 break;
-        }
 
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.record_menu_delete:
-                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
-                        RecordActivity.this);
-                alertBuilder.setTitle("삭제하려면 기록을 스와이프 하세요. ");
-                alertBuilder.setPositiveButton("확인",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertBuilder.show();
+            case 3:
+                // '프래그먼트3' 호출
+                RecordOutsiderFragment fragment3 = new RecordOutsiderFragment();
+                transaction.replace(R.id.fragment_container, fragment3);
+                transaction.commit();
                 break;
+
+            case 4:
+                // '프래그먼트4' 호출
+                OutsiderDetailFragment fragment4 = new OutsiderDetailFragment();
+                transaction.replace(R.id.fragment_container, fragment4);
+                transaction.commit();
+                break;
+
         }
-        return super.onOptionsItemSelected(item);
+
     }
+
+
 }

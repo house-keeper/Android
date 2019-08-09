@@ -39,7 +39,7 @@ public class DoorRecordRVAdapter extends RecyclerView.Adapter<DoorRecordRVAdapte
 
    @Override
    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-      Log.d("IMGTEST:: ",dataList.get(position).photo.toString());
+//      Log.d("IMGTEST:: ",dataList.get(position).photo.toString());
       Glide.with(ctx).load(dataList.get(position).photo).into(viewHolder.ivDoorRecordPhoto);
 
       if(dataList.get(position).status == 1) viewHolder.tvDoorRecordStatus.setText("현관문이 열렸습니다.");
