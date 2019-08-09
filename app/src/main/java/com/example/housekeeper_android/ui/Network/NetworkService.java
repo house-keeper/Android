@@ -1,12 +1,18 @@
 package com.example.housekeeper_android.ui.Network;
 
 import com.example.housekeeper_android.ui.Network.Delete.DeleteDoorRecordResponse;
+import com.example.housekeeper_android.ui.Network.Delete.DeleteOutsiderRecordResponse;
 import com.example.housekeeper_android.ui.Network.Delete.DeleteRecordResponse;
 import com.example.housekeeper_android.ui.Network.Delete.DeleteWindowRecordResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetDoorRecordResponse;
+import com.example.housekeeper_android.ui.Network.Get.GetOutsiderDetailResponse;
+import com.example.housekeeper_android.ui.Network.Get.GetOutsiderNameResponse;
+import com.example.housekeeper_android.ui.Network.Get.GetOutsiderRecordResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetRecordListResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetWindowRecordResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetWindowStatusResponse;
+import com.example.housekeeper_android.ui.Network.Post.PostEditOutsiderNameRequest;
+import com.example.housekeeper_android.ui.Network.Post.PostEditOutsiderNameResponse;
 import com.example.housekeeper_android.ui.Network.Post.PostRecordFileResponse;
 import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusRequest;
 import com.example.housekeeper_android.ui.Network.Post.PostWindowStatusResponse;
@@ -43,6 +49,32 @@ public interface NetworkService {
     Call<PostRecordFileResponse> postRecordFile(
             @Part MultipartBody.Part file,
             @Part("fileName") RequestBody fileName
+    );
+
+    // 외부인 기록 가져오기
+    @GET("count/list")
+    Call<GetOutsiderRecordResponse> getOutsiderRecordResponse();
+
+    // 외부인 기록 상세 가져오기
+    @GET("count/list/{name}")
+    Call<GetOutsiderDetailResponse> getOutsiderDetailRespnose(
+            @Path("name") String name
+    );
+
+    // 외부인 이름 목록 가져오기
+    @GET("count/name")
+    Call<GetOutsiderNameResponse> getOutsiderNameResponse();
+
+    // 외부인 이름 변경
+    @POST("count/edit")
+    Call<PostEditOutsiderNameResponse> postEditOutsiderNameResponse(
+            @Body PostEditOutsiderNameRequest postEditOutsiderNameRequest
+    );
+
+    // 외부인 기록 삭제
+    @DELETE("count/list/{idx}")
+    Call<DeleteOutsiderRecordResponse> deleteOutsiderRecordResponse(
+            @Path("idx") Integer idx
     );
 
     // 현관 기록 가져오기

@@ -15,6 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -49,6 +52,7 @@ public class RecordWindowFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_record_window, container, false);
 
         rvWindowRecord = (RecyclerView)rootView.findViewById(R.id.rvWindowRecord);
+        setHasOptionsMenu(true);
 
         Call<GetWindowRecordResponse> getWindowRecordResponseCall = ApplicationController.getInstance().getNetworkService().getWindowRecordResponse();
         getWindowRecordResponseCall.enqueue(new Callback<GetWindowRecordResponse>() {
@@ -139,6 +143,33 @@ public class RecordWindowFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuInflater menuInflater = inflater;
+        menuInflater.inflate(R.menu.record_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.record_menu_delete:
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
+                        getContext());
+                alertBuilder.setTitle("삭제하려면 기록을 스와이프 하세요. ");
+                alertBuilder.setPositiveButton("확인",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertBuilder.show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }
