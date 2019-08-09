@@ -101,7 +101,8 @@ public class RecordRVAdapter extends RecyclerView.Adapter<RecordRVAdapter.ViewHo
                         Log.d("RESPONSE_TEST",String.valueOf(response.body()));
                        // Toast.makeText(ctx,"삭제가 완료되었습니다.",Toast.LENGTH_SHORT);
                         Log.d("TESTTEST","삭제완료");
-                        notifyDataSetChanged();
+                        notifyItemRemoved(position);
+                        dataList.remove(position);
                     }
 
                     @Override
