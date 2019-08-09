@@ -1,6 +1,7 @@
 package com.example.housekeeper_android.ui.Fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +18,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -27,6 +32,7 @@ import com.example.housekeeper_android.ui.Network.ApplicationController;
 import com.example.housekeeper_android.ui.Network.Delete.DeleteDoorRecordResponse;
 import com.example.housekeeper_android.ui.Network.Delete.DeleteWindowRecordResponse;
 import com.example.housekeeper_android.ui.Network.Get.GetDoorRecordResponse;
+import com.example.housekeeper_android.ui.activity.RecordActivity;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,6 +55,7 @@ public class RecordDoorFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_record_door, container, false);
 
         rvDoorRecord = (RecyclerView)rootView.findViewById(R.id.rvDoorRecord);
+        setHasOptionsMenu(true);
 
         Call<GetDoorRecordResponse> getDoorRecordResponseCall = ApplicationController.getInstance().getNetworkService().getDoorRecordResponse();
         getDoorRecordResponseCall.enqueue(new Callback<GetDoorRecordResponse>() {
@@ -141,6 +148,34 @@ public class RecordDoorFragment extends Fragment {
         return rootView;
 
 
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuInflater menuInflater = inflater;
+        menuInflater.inflate(R.menu.record_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.record_menu_delete:
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
+                        getContext());
+                alertBuilder.setTitle("삭제하려면 기록을 스와이프 하세요. ");
+                alertBuilder.setPositiveButton("확인",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertBuilder.show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }
