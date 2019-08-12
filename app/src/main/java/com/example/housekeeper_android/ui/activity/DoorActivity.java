@@ -174,8 +174,8 @@ public class DoorActivity extends AppCompatActivity {
                 CMD ="tts";
                 real_text=interphone_my_message.getText().toString();
 
-                if(real_text.matches(".*[ㅏ-ㅣ]+.*")){
-                    Toast.makeText(DoorActivity.this,"단독 모음은 전송 불가합니다.",Toast.LENGTH_SHORT).show();
+                if(real_text.matches(".*[ㄱ-ㅎㅏ-ㅣ]+.*")){
+                    Toast.makeText(DoorActivity.this,"단독 자음 혹은 단독 모음은 전송 불가합니다.",Toast.LENGTH_SHORT).show();
                 }
 
                 DoorActivity.Socket_AsyncTask tts_send_text = new DoorActivity.Socket_AsyncTask();
