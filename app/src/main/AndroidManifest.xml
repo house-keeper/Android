@@ -23,8 +23,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity android:name=".ui.activity.AddressActivity" />
-        <activity android:name=".ui.activity.IPTestActivity" />
-        <activity android:name=".ui.activity.WifiTestActivity" />
         <activity
             android:name=".ui.activity.RecordvoiceActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />

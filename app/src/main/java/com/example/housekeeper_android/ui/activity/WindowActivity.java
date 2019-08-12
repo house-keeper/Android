@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,7 +51,10 @@ public class WindowActivity extends AppCompatActivity {
 
     Toolbar window_toolbar;
     Switch window_status_switch;
-    TextView window_status_text;
+    TextView window_status_text, weather_status_text, textView;
+    ImageView weather_img, next_img, next_img2;
+    LinearLayout main_ui;
+
     public static String wifiModuleIp = "192.168.0.28";
     public static int wifiModulePort = 8080;
     public static String CMD = "0";
@@ -61,10 +66,14 @@ public class WindowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_window);
         networkService = ApplicationController.getInstance().getNetworkService();
-
+        weather_img = (ImageView)findViewById(R.id.weather_img);
+        next_img = (ImageView)findViewById(R.id.next_img);
+        next_img2 = (ImageView)findViewById(R.id.next_img2);
+        weather_status_text =(TextView)findViewById(R.id.weather_status_text);
+        main_ui =(LinearLayout)findViewById(R.id.main_ui);
 
         //
-        TextView textView = (TextView)findViewById(R.id.weatherTv);
+        textView = (TextView)findViewById(R.id.weatherTv);
         mainWeatherConnection weatherConnection = new mainWeatherConnection();
         AsyncTask<String, String, String> result = weatherConnection.execute("","");
         System.out.println("RESULT");
@@ -77,6 +86,29 @@ public class WindowActivity extends AppCompatActivity {
 
         }
 
+        TextView next_weather_text =(TextView)findViewById(R.id.next_weather);
+        nextWeatherConnection nextweatherConnection = new nextWeatherConnection();
+        AsyncTask<String, String, String> result2 = nextweatherConnection.execute("","");
+        System.out.println("RESULT2");
+        try{
+            String msg2 = result2.get();
+            System.out.println(msg2);
+            next_weather_text.setText(msg2.toString());
+        }catch (Exception e){
+
+        }
+
+        TextView next_weather_text2 =(TextView)findViewById(R.id.next_weather2);
+        nextWeatherConnection2 nextweatherConnection2 = new nextWeatherConnection2();
+        AsyncTask<String, String, String> result3 = nextweatherConnection2.execute("","");
+        System.out.println("RESULT3");
+        try{
+            String msg3 = result3.get();
+            System.out.println(msg3);
+            next_weather_text2.setText(msg3.toString());
+        }catch (Exception e){
+
+        }
 
 
        window_status_text=(TextView)findViewById(R.id.window_status);
@@ -97,12 +129,9 @@ public class WindowActivity extends AppCompatActivity {
                     window_status_switch.setChecked(false);
                     Log.d("창문초기값2 ","window closed");
                 }
-
             }
-
             @Override
             public void onFailure(Call<GetWindowStatusResponse> call, Throwable t) {
-
             }
         });
         Log.d("호출테스트: ","onCreate");
@@ -133,6 +162,11 @@ public class WindowActivity extends AppCompatActivity {
         //   getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
+
+////////////////////////////////////////
+
+
+    ///////////////////////////////////////////
 
 
     //창문 열/닫 위한 소켓통신
@@ -184,23 +218,60 @@ public class WindowActivity extends AppCompatActivity {
 
                 Elements elements1 = document.select("div.fl h5");
                 Elements elements2 = document.select("div.fl em");
+                Elements elements5 = document.select("div.fl em strong");
                 Elements elements3 = document.select("div.fl p strong");
                 Elements elements4 = document.select("div.fl p a span");
+
 
                 System.out.println(elements1);
                 System.out.println(elements2);
                 System.out.println(elements3);
                 System.out.println(elements4);
+                System.out.println(elements5);
+
 
                 Element targetElement1 = elements1.get(0);
                 Element targetElement2 = elements2.get(0);
                 Element targetElement3 = elements3.get(1);
                 Element targetElement4 = elements4.get(0);
+                Element targetElement5 = elements5.get(0);
 
                 String text1 = targetElement1.text();
                 String text2 = targetElement2.text();
                 String text3 = "강수확률 " + targetElement3.text() + "%";
                 String text4 = targetElement4.text();
+                String text5 = targetElement5.text();
+
+                if (text5.equals("맑음")){
+                    weather_img.setImageResource(R.drawable.weather_status_sun);
+                    weather_status_text.setText(text5);
+                    main_ui.setBackgroundResource(R.drawable.sunny_bg);
+                }else if (text5.equals("흐림")){
+                    weather_img.setImageResource(R.drawable.weather_status_cloudy);
+                    weather_status_text.setText(text5);
+                    main_ui.setBackgroundResource(R.drawable.cloudy_bg);
+                }else if (text5.equals("구름많음") || text5.equals("구름조금") ){
+                    weather_img.setImageResource(R.drawable.weather_status_suncloud);
+                    weather_status_text.setText(text5);
+                    main_ui.setBackgroundResource(R.drawable.suncloud_bg);
+                }else if (text5.equals("비") || text5.equals("흐리고 비") || text5.equals("소나기") || text5.equals("구름많고 한때 소나기")){
+                    weather_img.setImageResource(R.drawable.weather_status_rain);
+                    main_ui.setBackgroundResource(R.drawable.rain_bg);
+                    weather_status_text.setText(text5);
+                }else if (text5.equals("눈") || text5.equals("진눈깨비")){
+                    weather_img.setImageResource(R.drawable.weather_status_snow);
+                    weather_status_text.setText(text5);
+                    main_ui.setBackgroundResource(R.drawable.snow_bg);
+                }else if (text5.equals("뇌우")){
+                    weather_img.setImageResource(R.drawable.weather_status_storm);
+                    weather_status_text.setText(text5);
+                    main_ui.setBackgroundResource(R.drawable.storm_bg);
+                }else if (text5.equals("흐려짐")){
+                    weather_img.setImageResource(R.drawable.weather_status_cloud);
+                    weather_status_text.setText(text5);
+                    main_ui.setBackgroundResource(R.drawable.cloud_bg);
+                }
+
 
                 String text = text1 + '\n' + text2 + '\n' + text3 + '\n' + text4;
                 return text;
@@ -224,27 +295,89 @@ public class WindowActivity extends AppCompatActivity {
 
                 Document document = Jsoup.connect(path).get();
 
-                Elements elements1 = document.select("div.fl h5");
-                Elements elements2 = document.select("div.fl em");
-                Elements elements3 = document.select("div.fl p strong");
-                Elements elements4 = document.select("div.fl p a span");
+                Elements elements1 = document.select("li.after_h h6");
+                Elements elements2 = document.select("div.inner p");
 
                 System.out.println(elements1);
                 System.out.println(elements2);
-                System.out.println(elements3);
-                System.out.println(elements4);
 
                 Element targetElement1 = elements1.get(0);
                 Element targetElement2 = elements2.get(0);
-                Element targetElement3 = elements3.get(1);
-                Element targetElement4 = elements4.get(0);
 
                 String text1 = targetElement1.text();
                 String text2 = targetElement2.text();
-                String text3 = "강수확률 " + targetElement3.text() + "%";
-                String text4 = targetElement4.text();
 
-                String text = text1 + '\n' + text2 + '\n' + text3 + '\n' + text4;
+
+                if (text2.equals("맑음")){
+                    next_img.setImageResource(R.drawable.weather_status_sun2);
+                }else if (text2.equals("흐림")){
+                    next_img.setImageResource(R.drawable.weather_status_cloudy2);
+                }else if (text2.equals("구름많음") || text2.equals("구름조금") ){
+                    next_img.setImageResource(R.drawable.weather_status_suncloud2);
+                }else if (text2.equals("비") || text2.equals("흐리고 비") || text2.equals("소나기") || text2.equals("구름많고 한때 소나기")){
+                    next_img.setImageResource(R.drawable.weather_status_rain2);
+                }else if (text2.equals("눈") || text2.equals("진눈깨비")){
+                    next_img.setImageResource(R.drawable.weather_status_snow2);
+                }else if (text2.equals("뇌우")){
+                    next_img.setImageResource(R.drawable.weather_status_storm2);
+                }else if (text2.equals("흐려짐")){
+                    next_img.setImageResource(R.drawable.weather_status_cloud2);
+                }
+
+
+                String text = text1 + '\n' + text2;
+                return text;
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public class nextWeatherConnection2 extends AsyncTask<String, String, String>{
+
+        // 백그라운드에서 작업
+        @Override
+        protected String doInBackground(String... params) {
+
+            // Jsoup을 이용한 날씨데이터 Pasing
+            try{
+                String path = "https://weather.naver.com/rgn/townWetr.nhn?naverRgnCd=09320105";
+
+                Document document = Jsoup.connect(path).get();
+
+                Elements elements1 = document.select("li.after_h h6");
+                Elements elements2 = document.select("div.inner p");
+
+                System.out.println(elements1);
+                System.out.println(elements2);
+
+                Element targetElement1 = elements1.get(1);
+                Element targetElement2 = elements2.get(1);
+
+                String text1 = targetElement1.text();
+                String text2 = targetElement2.text();
+
+
+                if (text2.equals("맑음")){
+                    next_img2.setImageResource(R.drawable.weather_status_sun2);
+                }else if (text2.equals("흐림")){
+                    next_img2.setImageResource(R.drawable.weather_status_cloudy2);
+                }else if (text2.equals("구름많음") || text2.equals("구름조금") ){
+                    next_img2.setImageResource(R.drawable.weather_status_suncloud2);
+                }else if (text2.equals("비") || text2.equals("흐리고 비") || text2.equals("소나기") || text2.equals("구름많고 한때 소나기")){
+                    next_img2.setImageResource(R.drawable.weather_status_rain2);
+                }else if (text2.equals("눈") || text2.equals("진눈깨비")){
+                    next_img2.setImageResource(R.drawable.weather_status_snow2);
+                }else if (text2.equals("뇌우")){
+                    next_img2.setImageResource(R.drawable.weather_status_storm2);
+                }else if (text2.equals("흐려짐")){
+                    next_img2.setImageResource(R.drawable.weather_status_cloud2);
+                }
+
+
+                String text = text1 + '\n' + text2;
                 return text;
 
             }catch (Exception e){

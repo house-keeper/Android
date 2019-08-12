@@ -94,7 +94,7 @@ public class DoorActivity extends AppCompatActivity {
 
     public static String wifiModuleIp = "192.168.0.28";
     public static int stt_connPort = 8885;
-    public static int tts_sendingPort = 8860;
+    public static int tts_sendingPort = 8080;
 //    public static int  = 8864;
     public static String CMD = "0";
     public static String real_text = "";
