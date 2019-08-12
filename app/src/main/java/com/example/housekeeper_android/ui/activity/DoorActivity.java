@@ -101,6 +101,7 @@ public class DoorActivity extends AppCompatActivity {
     public static String s3_address="";
     public static String text ="";
 
+//    public static ArrayList<String> ConfirmTextArray = ["ㅏ","ㅑ","ㅓ","ㄹ","ㅁ","ㅂ","ㅅ","ㄴ"]
     Thread socketServerThread = null;
 
     @Override
@@ -115,7 +116,6 @@ public class DoorActivity extends AppCompatActivity {
 
         door_toolbar = (Toolbar) findViewById(R.id.door_toolbar);
         door_streaming=(WebView)findViewById(R.id.door_webview);
-        interphone_capture_btn=(Button)findViewById(R.id.interphone_capture_btn);
         interphone_outsider_message=(TextView)findViewById(R.id.interphone_outsider_message);
         interphone_my_message=(EditText)findViewById(R.id.interphone_my_message);
         interphone_my_message_view=(LinearLayout)findViewById(R.id.interphone_my_message_view);
@@ -173,6 +173,11 @@ public class DoorActivity extends AppCompatActivity {
             public void onClick(View v) {
                 CMD ="tts";
                 real_text=interphone_my_message.getText().toString();
+
+                if(real_text.matches(".*[ㅏ-ㅣ]+.*")){
+                    Toast.makeText(DoorActivity.this,"단독 모음은 전송 불가합니다.",Toast.LENGTH_SHORT).show();
+                }
+
                 DoorActivity.Socket_AsyncTask tts_send_text = new DoorActivity.Socket_AsyncTask();
                tts_send_text.execute();
             }

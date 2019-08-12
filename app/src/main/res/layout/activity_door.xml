@@ -32,14 +32,6 @@
             android:layout_margin="5dp" />
 
 
-        <Button
-            android:id="@+id/interphone_capture_btn"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:background="@drawable/camera_button"
-            android:layout_margin="13dp"
-            android:layout_gravity="right|bottom"/>
-
     </FrameLayout>
 
     <LinearLayout

@@ -159,7 +159,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
-            android:textColor="#000000"
             android:text="창문 상태 |"
             android:textSize="18sp" />
 
@@ -170,7 +169,6 @@
             android:layout_marginTop="21dp"
             android:layout_toRightOf="@id/window_s"
             android:id="@+id/window_status"
-            android:textColor="#000000"
             android:text="닫힘"
             android:textSize="18sp" />
 
