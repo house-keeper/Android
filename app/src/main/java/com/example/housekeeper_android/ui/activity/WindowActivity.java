@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -59,6 +60,8 @@ public class WindowActivity extends AppCompatActivity {
     public static int wifiModulePort = 8080;
     public static String CMD = "0";
     NetworkService networkService;
+    boolean isFirstCreate;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,8 @@ public class WindowActivity extends AppCompatActivity {
         next_img2 = (ImageView)findViewById(R.id.next_img2);
         weather_status_text =(TextView)findViewById(R.id.weather_status_text);
         main_ui =(LinearLayout)findViewById(R.id.main_ui);
+        isFirstCreate = true;
+
 
         //
         textView = (TextView)findViewById(R.id.weatherTv);
@@ -137,21 +142,28 @@ public class WindowActivity extends AppCompatActivity {
         Log.d("호출테스트: ","onCreate");
 
         window_status_switch = (Switch) findViewById(R.id.window_status_btn);
+
         window_status_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // The toggle is enabled
-                    CMD = "1";
-                    Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
-                    cmd_increase_servo.execute();
-                    window_status_text.setText("열림");
-                } else if(!isChecked){
-                    // The toggle is disabled
-                    CMD = "0";
-                    window_status_text.setText("닫힘");
-                    Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
-                    cmd_increase_servo.execute();
+                Log.d("SWITCHTEST",String.valueOf(isFirstCreate));
+                if(!isFirstCreate){
+                    if (isChecked) {
+                        // The toggle is enabled
+                        CMD = "1";
+                        Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
+                        cmd_increase_servo.execute();
+                        window_status_text.setText("열림");
+                    } else if(!isChecked){
+                        // The toggle is disabled
+                        CMD = "0";
+                        window_status_text.setText("닫힘");
+                        Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
+                        cmd_increase_servo.execute();
+                    }
                 }
+                isFirstCreate = false;
+
+
             }
         });
 
@@ -163,7 +175,13 @@ public class WindowActivity extends AppCompatActivity {
 
     }
 
-////////////////////////////////////////
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isFirstCreate = false;
+    }
+
+    ////////////////////////////////////////
 
 
     ///////////////////////////////////////////

@@ -40,22 +40,7 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
 
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w("Firebase Status", "getInstanceId failed", task.getException());
-                            return;
-                        }
 
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-
-                        // Log and toast
-                        Log.d("Firebase ","FCM token: "+ token.toString());
-                    }
-                });
 
         //툴바 관련
         record_toolbar = (Toolbar) findViewById(R.id.record_toolbar);

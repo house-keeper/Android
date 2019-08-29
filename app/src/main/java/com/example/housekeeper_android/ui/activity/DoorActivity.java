@@ -84,7 +84,7 @@ public class DoorActivity extends AppCompatActivity {
     TextView interphone_outsider_message;
     EditText interphone_my_message;
     LinearLayout interphone_my_message_view;
-    Button interphone_capture_btn, interphone_send_message_btn, interphone_send_record_btn;
+    Button interphone_send_message_btn, interphone_send_record_btn;
     private TextToSpeech tts;
 
     private WebView door_streaming;
@@ -101,7 +101,6 @@ public class DoorActivity extends AppCompatActivity {
     public static String s3_address="";
     public static String text ="";
 
-//    public static ArrayList<String> ConfirmTextArray = ["ㅏ","ㅑ","ㅓ","ㄹ","ㅁ","ㅂ","ㅅ","ㄴ"]
     Thread socketServerThread = null;
 
     @Override
@@ -109,11 +108,7 @@ public class DoorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_door);
 
-        Log.d("생명주기: ","onCreate");
-
         Context ctx = this;
-
-
         door_toolbar = (Toolbar) findViewById(R.id.door_toolbar);
         door_streaming=(WebView)findViewById(R.id.door_webview);
         interphone_outsider_message=(TextView)findViewById(R.id.interphone_outsider_message);
@@ -241,10 +236,7 @@ public class DoorActivity extends AppCompatActivity {
 
                     }
                 });
-
-
                 alertBuilder.show();
-
             }
         });
     }
@@ -262,9 +254,7 @@ public class DoorActivity extends AppCompatActivity {
 
                 while (true) {
                     System.out.println("클라이언트 접속 대기 중...");
-                  //  serverSocket.bind(SocketServerPORT);
                     Socket socket = serverSocket.accept();
-                    Log.d("TESTTEST",socket.getInetAddress().toString());
                     System.out.println(socket.getInetAddress() + "가 접속되었습니다.");
 
                     BufferedReader bufferedReader =
@@ -279,7 +269,13 @@ public class DoorActivity extends AppCompatActivity {
                     DoorActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                          interphone_outsider_message.setText(element.getAsJsonObject().get("text").getAsString());
+                           // if (element.getAsJsonObject().get("text").getAsString()!=""){
+                                interphone_outsider_message.setText(element.getAsJsonObject().get("text").getAsString());
+                             //   CMD = "1";
+                               //DoorActivity.Socket_AsyncTask rpi_connection_confirm = new DoorActivity.Socket_AsyncTask();
+                                //rpi_connection_confirm.execute();
+                            //}else SocketServerThread.this.run();
+
                         }
                     });
                 }
@@ -324,10 +320,8 @@ public class DoorActivity extends AppCompatActivity {
           //                  text=URLEncoder.encode(real_text,"utf-8");
                             dataOutputStream.writeBytes(URLEncoder.encode(real_text, "UTF-8"));
                             Log.d("DATA::output",real_text);
-          //                 Log.d("DATA::encoded",text);
                             dataOutputStream.flush();
                             Log.d("DATA::output2","flushed");
-                            // dataOutputStream.close();
                    // send record
                     }else if(rpi_confirm_message.equals("send address")){
                             Log.d("DATA::fromrpi","address writing");
@@ -351,7 +345,18 @@ public class DoorActivity extends AppCompatActivity {
                     dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
                     dataOutputStream.flush();
                     Log.d("DATA:: ",CMD.toString());
-                    dataOutputStream.close();
+
+            //        BufferedReader br2 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+           //        rpi_confirm_message=br2.readLine();
+
+                  //  Log.d("RCVDATA:: ",rpi_confirm_message);
+
+          //          if(CMD == "1" && rpi_confirm_message.equals("ok")){
+           //             DataOutputStream dataOutputStream2 = new DataOutputStream(socket.getOutputStream());
+          //              dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
+          //              dataOutputStream.flush();
+                       // dataOutputStream.close();
+       //             }
                 }
                 socket.close();
             }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
@@ -374,6 +379,24 @@ public class DoorActivity extends AppCompatActivity {
         if (serverSocket != null) {
             try {
                 serverSocket.close();
+                CMD = "0";
+                DoorActivity.Socket_AsyncTask cmd_increase_servo = new DoorActivity.Socket_AsyncTask();
+/*
+                BufferedReader br2 = new BufferedReader(new InputStreamReader(cmd_increase_servo.socket.getInputStream()));
+                rpi_confirm_message=br2.readLine();
+
+                Log.d("RCVDATA:: ",rpi_confirm_message);
+
+                if(rpi_confirm_message.equals("ok")){
+                    DataOutputStream dataOutputStream = new DataOutputStream(cmd_increase_servo.socket.getOutputStream());
+                    dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
+                    dataOutputStream.flush();
+                    dataOutputStream.close();
+                }
+*/
+             //
+                cmd_increase_servo.execute();
+
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -384,9 +407,7 @@ public class DoorActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        CMD = "0";
-        DoorActivity.Socket_AsyncTask cmd_increase_servo = new DoorActivity.Socket_AsyncTask();
-        cmd_increase_servo.execute();
+
     }
 
     @Override
