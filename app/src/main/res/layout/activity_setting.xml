@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="23dp"
             android:layout_marginLeft="20dp"
+            android:textSize="25sp"
             android:text="내 주소 입력하기" />
 
         <Button
@@ -48,6 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="23dp"
             android:layout_marginLeft="20dp"
+            android:textSize="25sp"
             android:text="자주 사용하는 음성 녹음하기" />
 
         <Button

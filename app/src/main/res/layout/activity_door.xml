@@ -50,9 +50,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
-                android:textSize="18sp"
+                android:textSize="25sp"
                 android:background="@null"
-                android:text="외부인 음성 녹음 중..." />
+                android:text="메시지 대기 중..." />
 
 
         </LinearLayout>
@@ -83,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"
+                android:textSize="25sp"
                 android:background="@null"
                 android:inputType="text"
                 />

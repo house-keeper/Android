@@ -26,17 +26,20 @@
                 android:scaleType="fitXY"
                 android:src="@drawable/yungmin"/>
 
-            <RelativeLayout
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_alignParentBottom="true">
+                android:layout_alignParentBottom="true"
+                android:id="@+id/parentCST">
                 <TextView
                     android:id="@+id/tvOutsiderName"
                     android:text="outsider1"
                     android:textSize="17dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    card_view:layout_constraintBottom_toBottomOf="@+id/parentCST"
+                    card_view:layout_constraintLeft_toLeftOf="@+id/parentCST"/>
 
                 <TextView
                     android:id="@+id/tvOutsiderCount"
@@ -44,10 +47,13 @@
                     android:textSize="17dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"/>
+                    card_view:layout_constraintBottom_toBottomOf="@+id/parentCST"
+                    card_view:layout_constraintRight_toRightOf="@+id/parentCST"
+                    card_view:layout_constraintLeft_toRightOf="@+id/tvOutsiderName"
+                    />
 
 
-            </RelativeLayout>
+            </android.support.constraint.ConstraintLayout>
         </RelativeLayout>
 
 

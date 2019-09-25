@@ -7,7 +7,7 @@
         android:id="@+id/main_ui"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/sunny_bg"
+        android:background="@drawable/cloudy_bg"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
@@ -48,13 +48,14 @@
             android:layout_height="160dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
+
             android:layout_marginBottom="10dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/weather_status_text"
-            android:text="맑음"
+            android:text="흐림"
             android:textColor="#ffffff"
             android:layout_marginBottom="10dp"
             android:layout_gravity="center"
@@ -65,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="날씨 정보란"
+            android:text="날씨정보"
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
@@ -78,7 +79,7 @@
         android:layout_alignParentBottom="true">
 
             <RelativeLayout
-                android:layout_width="199dp"
+                android:layout_width="198dp"
                 android:layout_height="100dp"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="5dp"
@@ -109,7 +110,7 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="199dp"
+                android:layout_width="198dp"
                 android:layout_height="100dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginBottom="3dp"

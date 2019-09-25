@@ -40,7 +40,6 @@ public class DoorRecordRVAdapter extends RecyclerView.Adapter<DoorRecordRVAdapte
    @Override
    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
 //      Log.d("IMGTEST:: ",dataList.get(position).photo.toString());
-      Glide.with(ctx).load(dataList.get(position).photo).into(viewHolder.ivDoorRecordPhoto);
 
       if(dataList.get(position).status == 1) viewHolder.tvDoorRecordStatus.setText("현관문이 열렸습니다.");
       else viewHolder.tvDoorRecordStatus.setText("현관문이 닫혔습니다.");
@@ -54,13 +53,11 @@ public class DoorRecordRVAdapter extends RecyclerView.Adapter<DoorRecordRVAdapte
    }
 
    static class ViewHolder extends RecyclerView.ViewHolder{
-     ImageView ivDoorRecordPhoto;
      TextView tvDoorRecordStatus;
      TextView tvDoorRecordTime;
 
       public ViewHolder(@NonNull View itemView) {
          super(itemView);
-         ivDoorRecordPhoto = (ImageView) itemView.findViewById(R.id.ivDoorRecordPhoto);
          tvDoorRecordStatus = (TextView) itemView.findViewById(R.id.tvDoorRecordStatus);
          tvDoorRecordTime = (TextView) itemView.findViewById(R.id.tvDoorRecordTime);
       }

@@ -56,11 +56,11 @@ public class WindowActivity extends AppCompatActivity {
     ImageView weather_img, next_img, next_img2;
     LinearLayout main_ui;
 
-    public static String wifiModuleIp = "192.168.0.28";
+    public static String wifiModuleIp = "192.168.0.8";
     public static int wifiModulePort = 8080;
     public static String CMD = "0";
     NetworkService networkService;
-    boolean isFirstCreate;
+    boolean isFirstCreate=true;
 
 
     @Override
@@ -74,7 +74,7 @@ public class WindowActivity extends AppCompatActivity {
         next_img2 = (ImageView)findViewById(R.id.next_img2);
         weather_status_text =(TextView)findViewById(R.id.weather_status_text);
         main_ui =(LinearLayout)findViewById(R.id.main_ui);
-        isFirstCreate = true;
+//        isFirstCreate = true;
 
 
         //
@@ -178,7 +178,7 @@ public class WindowActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        isFirstCreate = false;
+        isFirstCreate = true;
     }
 
     ////////////////////////////////////////

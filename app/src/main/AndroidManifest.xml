@@ -35,7 +35,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.RecordActivity" />
-        <activity android:name=".ui.activity.WindowActivity" />
+        <activity android:name=".ui.activity.WindowActivity">
+
+        </activity>
         <activity
             android:name=".ui.activity.DoorActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />

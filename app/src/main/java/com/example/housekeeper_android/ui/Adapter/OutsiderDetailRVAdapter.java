@@ -135,7 +135,7 @@ public class OutsiderDetailRVAdapter extends RecyclerView.Adapter<OutsiderDetail
                             @Override
                             public void onResponse(Call<DeleteOutsiderRecordResponse> call, Response<DeleteOutsiderRecordResponse> response) {
                                 Toast.makeText(ctx, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                                notifyItemRemoved(which);
+                                notifyItemRemoved(dataList.size()-(which*Math.abs(1)));
                                 dataList.remove(which+1);
                             }
 

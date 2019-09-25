@@ -52,10 +52,14 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -89,19 +93,29 @@ public class DoorActivity extends AppCompatActivity {
 
     private WebView door_streaming;
     ServerSocket serverSocket;
+ //   private static Socket socket2;
+
+    Socket clientSocket;
     public static String outsider_message="";
     public static String rpi_confirm_message="";
+    public static String rpi_ok_message="";
 
     public static String wifiModuleIp = "192.168.0.28";
-    public static int stt_connPort = 8885;
-    public static int tts_sendingPort = 8080;
+    public static int stt_connPort =8888;
+    public static int tts_sendingPort = 8881;
 //    public static int  = 8864;
     public static String CMD = "0";
+    public static String on_CMD="0";
     public static String real_text = "";
     public static String s3_address="";
     public static String text ="";
+    public static String flag ="0";
+
+    private static OutputStream os;
 
     Thread socketServerThread = null;
+    Thread flagThread = null;
+    Thread stt_socketClientThread = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,12 +152,23 @@ public class DoorActivity extends AppCompatActivity {
                 return true;
             }
         });
-        door_streaming.loadUrl("http://jsmjsm.iptime.org:8885/?action=stream");
+//        door_streaming.loadUrl("http://jsmjsm.iptime.org:8885/?action=stream");
+        door_streaming.loadUrl("http://192.168.0.8:8080/?action=stream");
+
 
         //dooractivity 들어오면 라즈베리에게 신호 전송
-        CMD = "1";
-        DoorActivity.Socket_AsyncTask rpi_connection_confirm = new DoorActivity.Socket_AsyncTask();
-        rpi_connection_confirm.execute();
+          on_CMD = "1";
+        flagThread = new Thread(new ConnectThread());
+        flagThread.start();
+
+
+       //   DoorActivity.Flag_AsyncTask rpi_connection_confirm = new DoorActivity.Flag_AsyncTask();
+       //   rpi_connection_confirm.execute();
+       //   if(flag.equals("1")){
+       //   rpi_connection_confirm.cancel(true);
+       //   flag="0";
+        //  }
+
 
         //인터폰 외부인 텍스트 받기
         socketServerThread = new Thread(new SocketServerThread());
@@ -166,7 +191,7 @@ public class DoorActivity extends AppCompatActivity {
         interphone_send_message_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CMD ="tts";
+                CMD ="t";
                 real_text=interphone_my_message.getText().toString();
 
                 if(real_text.matches(".*[ㄱ-ㅎㅏ-ㅣ]+.*")){
@@ -175,6 +200,8 @@ public class DoorActivity extends AppCompatActivity {
                 else{
                     DoorActivity.Socket_AsyncTask tts_send_text = new DoorActivity.Socket_AsyncTask();
                     tts_send_text.execute();
+                    Toast.makeText(DoorActivity.this,"전송되었습니다.",Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
@@ -230,7 +257,7 @@ public class DoorActivity extends AppCompatActivity {
                         String recordFile = recordFileList.get(which);
                         s3_address = recordFile;
                         // TODO: 녹음 라즈베리파이에 보내기
-                        CMD="s3address";
+                        CMD="r";
                         DoorActivity.Socket_AsyncTask send_S3_address = new DoorActivity.Socket_AsyncTask();
                         send_S3_address.execute();
 
@@ -244,7 +271,7 @@ public class DoorActivity extends AppCompatActivity {
     ///////////////////////////////////////////////////////////////
     private class SocketServerThread extends Thread {
 
-        static final int SocketServerPORT = 8881;
+        static final int SocketServerPORT = 8885;
         int count = 0;
 
         @Override
@@ -254,14 +281,16 @@ public class DoorActivity extends AppCompatActivity {
 
                 while (true) {
                     System.out.println("클라이언트 접속 대기 중...");
-                    Socket socket = serverSocket.accept();
-                    System.out.println(socket.getInetAddress() + "가 접속되었습니다.");
+                    Socket sttD_socket = serverSocket.accept();
+                    System.out.println(sttD_socket.getInetAddress() + "가 접속되었습니다.");
 
                     BufferedReader bufferedReader =
-                            new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                            new BufferedReader(new InputStreamReader(sttD_socket.getInputStream()));
 
                     // 클라이언트로부터 메시지 입력받음
                     outsider_message= bufferedReader.readLine();
+                    Log.d("outMDATA:: ",outsider_message.toString());
+
 
                     JsonParser parser = new JsonParser();
                     final JsonElement element = parser.parse(outsider_message);
@@ -287,6 +316,32 @@ public class DoorActivity extends AppCompatActivity {
 
     }
 
+    private class ConnectThread extends Thread{
+
+        Socket socket2;
+
+        public void run(){
+            try{
+                InetAddress inetAddress = InetAddress.getByName(DoorActivity.wifiModuleIp);
+                if(on_CMD == "0" || on_CMD == "1") {
+                    socket2 = new java.net.Socket(inetAddress, DoorActivity.stt_connPort);
+                    DataOutputStream dataOutputStream = new DataOutputStream(socket2.getOutputStream());
+                    dataOutputStream.writeBytes(URLEncoder.encode(on_CMD, "utf-8"));
+                    dataOutputStream.flush();
+                    Log.d("DATA:: ",on_CMD.toString());
+                 //   dataOutputStream.close();
+                }
+                socket2.close();
+                this.interrupt();
+
+            }catch(Exception e){
+
+            }
+        }
+
+    }
+
+
 
     //////////////////////////////////////////////////////
 
@@ -300,7 +355,7 @@ public class DoorActivity extends AppCompatActivity {
             try{
                 InetAddress inetAddress = InetAddress.getByName(DoorActivity.wifiModuleIp);
 
-                if(CMD.equals("tts") || CMD.equals("s3address")){
+                if(CMD.equals("t") || CMD.equals("r")){
                     socket = new java.net.Socket(inetAddress,DoorActivity.tts_sendingPort);
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
@@ -330,39 +385,24 @@ public class DoorActivity extends AppCompatActivity {
                             Log.d("DATA::output",s3_address);
                             dataOutputStream.flush();
                             Log.d("DATA::output2","flushed");
-             //               rpi_confirm_message=br.readLine();
-             //               if(rpi_confirm_message.equals("200")){
-            //                Toast.makeText(DoorActivity.this, "성공적으로 전송되었습니다.", Toast.LENGTH_SHORT).show();
-           //                 }
 
-                       //     Toast.makeText(DoorActivity.this, "전송이 실패하였습니다.", Toast.LENGTH_SHORT).show();
                     }
                     else dataOutputStream.close();
                 }
-                if(CMD == "0" || CMD == "1") {
-                    socket = new java.net.Socket(inetAddress, DoorActivity.stt_connPort);
-                    DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                    dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
-                    dataOutputStream.flush();
-                    Log.d("DATA:: ",CMD.toString());
-
-            //        BufferedReader br2 = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-           //        rpi_confirm_message=br2.readLine();
-
-                  //  Log.d("RCVDATA:: ",rpi_confirm_message);
-
-          //          if(CMD == "1" && rpi_confirm_message.equals("ok")){
-           //             DataOutputStream dataOutputStream2 = new DataOutputStream(socket.getOutputStream());
-          //              dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
-          //              dataOutputStream.flush();
-                       // dataOutputStream.close();
-       //             }
-                }
                 socket.close();
+                //flag="1";
             }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
             return null;
         }
+
+        @Override
+        protected void onCancelled() {
+            // TODO Auto-generated method stub
+            super.onCancelled();
+            this.cancel(true);
+        }
     }
+
 
     //ToolBar에 menu.xml을 인플레이트함
     @Override
@@ -379,23 +419,6 @@ public class DoorActivity extends AppCompatActivity {
         if (serverSocket != null) {
             try {
                 serverSocket.close();
-                CMD = "0";
-                DoorActivity.Socket_AsyncTask cmd_increase_servo = new DoorActivity.Socket_AsyncTask();
-/*
-                BufferedReader br2 = new BufferedReader(new InputStreamReader(cmd_increase_servo.socket.getInputStream()));
-                rpi_confirm_message=br2.readLine();
-
-                Log.d("RCVDATA:: ",rpi_confirm_message);
-
-                if(rpi_confirm_message.equals("ok")){
-                    DataOutputStream dataOutputStream = new DataOutputStream(cmd_increase_servo.socket.getOutputStream());
-                    dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
-                    dataOutputStream.flush();
-                    dataOutputStream.close();
-                }
-*/
-             //
-                cmd_increase_servo.execute();
 
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -407,6 +430,9 @@ public class DoorActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+   //     CMD = "0";
+    //    DoorActivity.Socket_AsyncTask cmd = new DoorActivity.Socket_AsyncTask();
+//       cmd.execute();
 
     }
 
