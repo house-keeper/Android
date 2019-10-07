@@ -100,9 +100,16 @@ public class DoorActivity extends AppCompatActivity {
     public static String rpi_confirm_message="";
     public static String rpi_ok_message="";
 
+    //Rpi1
     public static String wifiModuleIp = "192.168.0.28";
     public static int stt_connPort =8888;
     public static int tts_sendingPort = 8881;
+
+    //Rpi2
+    public static String CamwifiModuleIp ="192.168.0.8";
+    public static int cam_sendingPort =8745 ;
+
+
 //    public static int  = 8864;
     public static String CMD = "0";
     public static String on_CMD="0";
@@ -114,8 +121,11 @@ public class DoorActivity extends AppCompatActivity {
     private static OutputStream os;
 
     Thread socketServerThread = null;
-    Thread flagThread = null;
-    Thread stt_socketClientThread = null;
+    Thread bellflagThread = null;
+    Thread camflagThread = null;
+    Thread belloffflagThread = null;
+    Thread camoffflagThread = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,18 +166,16 @@ public class DoorActivity extends AppCompatActivity {
         door_streaming.loadUrl("http://192.168.0.8:8080/?action=stream");
 
 
-        //dooractivity 들어오면 라즈베리에게 신호 전송
-          on_CMD = "1";
-        flagThread = new Thread(new ConnectThread());
-        flagThread.start();
+        //dooractivity 들어오면 라즈베리2 에게 신호 전송 // 카메라 스트리밍
+        flag = "1";
+        camflagThread = new Thread(new camConnectThread());
+        camflagThread.start();
 
+        //dooractivity 들어오면 라즈베리1 에게 신호 전송 // 인터폰
+        on_CMD = "1";
+        bellflagThread = new Thread(new ConnectThread());
+        bellflagThread.start();
 
-       //   DoorActivity.Flag_AsyncTask rpi_connection_confirm = new DoorActivity.Flag_AsyncTask();
-       //   rpi_connection_confirm.execute();
-       //   if(flag.equals("1")){
-       //   rpi_connection_confirm.cancel(true);
-       //   flag="0";
-        //  }
 
 
         //인터폰 외부인 텍스트 받기
@@ -298,13 +306,7 @@ public class DoorActivity extends AppCompatActivity {
                     DoorActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                           // if (element.getAsJsonObject().get("text").getAsString()!=""){
                                 interphone_outsider_message.setText(element.getAsJsonObject().get("text").getAsString());
-                             //   CMD = "1";
-                               //DoorActivity.Socket_AsyncTask rpi_connection_confirm = new DoorActivity.Socket_AsyncTask();
-                                //rpi_connection_confirm.execute();
-                            //}else SocketServerThread.this.run();
-
                         }
                     });
                 }
@@ -313,7 +315,6 @@ public class DoorActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
     }
 
     private class ConnectThread extends Thread{
@@ -328,10 +329,35 @@ public class DoorActivity extends AppCompatActivity {
                     DataOutputStream dataOutputStream = new DataOutputStream(socket2.getOutputStream());
                     dataOutputStream.writeBytes(URLEncoder.encode(on_CMD, "utf-8"));
                     dataOutputStream.flush();
-                    Log.d("DATA:: ",on_CMD.toString());
+                    Log.d("on_CMD_DATA:: ",on_CMD.toString());
                  //   dataOutputStream.close();
                 }
                 socket2.close();
+                this.interrupt();
+
+            }catch(Exception e){
+
+            }
+        }
+
+    }
+
+    private class camConnectThread extends Thread{
+
+        Socket socket3;
+
+        public void run(){
+            try{
+                InetAddress inetAddress = InetAddress.getByName(DoorActivity.CamwifiModuleIp);
+                if(flag == "0" || flag == "1") {
+                    socket3 = new java.net.Socket(inetAddress, DoorActivity.cam_sendingPort);
+                    DataOutputStream dataOutputStream = new DataOutputStream(socket3.getOutputStream());
+                    dataOutputStream.writeBytes(URLEncoder.encode(flag, "utf-8"));
+                    dataOutputStream.flush();
+                    Log.d("flag_DATA:: ",flag.toString());
+                    //   dataOutputStream.close();
+                }
+                socket3.close();
                 this.interrupt();
 
             }catch(Exception e){
@@ -430,9 +456,15 @@ public class DoorActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-   //     CMD = "0";
-    //    DoorActivity.Socket_AsyncTask cmd = new DoorActivity.Socket_AsyncTask();
-//       cmd.execute();
+        //dooractivity 들어오면 라즈베리1 에게 신호 전송 // 인터폰
+        on_CMD = "0";
+        belloffflagThread = new Thread(new ConnectThread());
+        belloffflagThread.start();
+
+        //dooractivity 들어오면 라즈베리2 에게 신호 전송 // 카메라 스트리밍
+        flag = "0";
+        camoffflagThread = new Thread(new camConnectThread());
+        camoffflagThread.start();
 
     }
 
