@@ -36,7 +36,7 @@ public class OutsiderDetailRVAdapter extends RecyclerView.Adapter<OutsiderDetail
 
     ArrayList<OutsiderDetailData> dataList;
     Context ctx;
-    Integer idx;
+    //Integer idx;
 
     public OutsiderDetailRVAdapter(Context ctx, ArrayList<OutsiderDetailData> dataList) {
         this.dataList = dataList;
@@ -51,9 +51,10 @@ public class OutsiderDetailRVAdapter extends RecyclerView.Adapter<OutsiderDetail
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int position) {
         Glide.with(ctx).load(dataList.get(position).photo).into(viewHolder.ivOutsiderDetailPhoto);
-        idx = dataList.get(position).idx;
+        //idx = dataList.get(position).idx;
+        viewHolder.idxOutsider = dataList.get(position).idx;
 
         viewHolder.ivOutsiderDetailPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +99,7 @@ public class OutsiderDetailRVAdapter extends RecyclerView.Adapter<OutsiderDetail
                     @Override
                     public void onClick(DialogInterface dialog, final int which) {
                         // TODO: 외부인 이동시키기
-                        Call<PostEditOutsiderNameResponse> postEditOutsiderNameResponseCall = ApplicationController.getInstance().getNetworkService().postEditOutsiderNameResponse(new PostEditOutsiderNameRequest(idx, adapter.getItem(which).toString()));
+                        Call<PostEditOutsiderNameResponse> postEditOutsiderNameResponseCall = ApplicationController.getInstance().getNetworkService().postEditOutsiderNameResponse(new PostEditOutsiderNameRequest(viewHolder.idxOutsider, adapter.getItem(which).toString()));
                         postEditOutsiderNameResponseCall.enqueue(new Callback<PostEditOutsiderNameResponse>() {
                             @Override
                             public void onResponse(Call<PostEditOutsiderNameResponse> call, Response<PostEditOutsiderNameResponse> response) {
@@ -129,14 +130,16 @@ public class OutsiderDetailRVAdapter extends RecyclerView.Adapter<OutsiderDetail
                 alertBuilder.setTitle("삭제하시겠습니까?");
                 alertBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, final int which) {
-                        Call<DeleteOutsiderRecordResponse> deleteOutsiderRecordResponseCall = ApplicationController.getInstance().getNetworkService().deleteOutsiderRecordResponse(idx);
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Call<DeleteOutsiderRecordResponse> deleteOutsiderRecordResponseCall = ApplicationController.getInstance().getNetworkService().deleteOutsiderRecordResponse(viewHolder.idxOutsider);
                         deleteOutsiderRecordResponseCall.enqueue(new Callback<DeleteOutsiderRecordResponse>() {
                             @Override
                             public void onResponse(Call<DeleteOutsiderRecordResponse> call, Response<DeleteOutsiderRecordResponse> response) {
                                 Toast.makeText(ctx, "삭제되었습니다.", Toast.LENGTH_SHORT).show();
-                                notifyItemRemoved(dataList.size()-(which*Math.abs(1)));
-                                dataList.remove(which+1);
+                                //notifyItemRemoved(dataList.size()-(which*Math.abs(1)));
+                                dataList.remove(position);
+                                notifyDataSetChanged();
                             }
 
                             @Override
@@ -144,6 +147,7 @@ public class OutsiderDetailRVAdapter extends RecyclerView.Adapter<OutsiderDetail
                                 Toast.makeText(ctx, "FAIL.", Toast.LENGTH_SHORT).show();
                             }
                         });
+
 
                     }
                 });
@@ -166,6 +170,7 @@ public class OutsiderDetailRVAdapter extends RecyclerView.Adapter<OutsiderDetail
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivOutsiderDetailPhoto;
+        Integer idxOutsider;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
