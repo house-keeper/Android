@@ -44,8 +44,8 @@
 
         <ImageView
             android:id="@+id/weather_img"
-            android:layout_width="160dp"
-            android:layout_height="160dp"
+            android:layout_width="145dp"
+            android:layout_height="145dp"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
 
@@ -79,10 +79,11 @@
         android:layout_alignParentBottom="true">
 
             <RelativeLayout
-                android:layout_width="198dp"
+                android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="5dp"
+                android:paddingRight="43dp"
                 android:layout_marginBottom="4dp"
                 android:background="@drawable/interphone_text_round"
                 android:id="@+id/ff">
@@ -110,9 +111,10 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="198dp"
+                android:layout_width="wrap_content"
                 android:layout_height="100dp"
                 android:layout_alignParentRight="true"
+                android:paddingRight="43dp"
                 android:layout_marginBottom="3dp"
                 android:layout_marginRight="5dp"
                 android:background="@drawable/interphone_text_round"

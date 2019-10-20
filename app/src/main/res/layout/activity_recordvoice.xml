@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="4"
         android:orientation="vertical"
-        android:background="#D4F4FA">
+        android:background="#E6FFFF">
 
         <TextView
             android:layout_width="match_parent"
@@ -84,7 +84,7 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:layout_marginBottom="5dp"
-            android:background="#3DB7CC"
+            android:background="#00C6ED"
             android:text="녹음된 음성 목록"/>
 
 

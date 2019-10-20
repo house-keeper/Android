@@ -10,8 +10,10 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -77,6 +81,7 @@ import java.util.Locale;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Url;
 
 import static android.media.audiofx.AudioEffect.ERROR;
 
@@ -90,6 +95,13 @@ public class DoorActivity extends AppCompatActivity {
     LinearLayout interphone_my_message_view;
     Button interphone_send_message_btn, interphone_send_record_btn;
     private TextToSpeech tts;
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        door_streaming.getSettings().setJavaScriptEnabled(true);
+        door_streaming.getSettings().setUseWideViewPort(true);
+        door_streaming.getSettings().setLoadWithOverviewMode(true);
+    }
 
     private WebView door_streaming;
     ServerSocket serverSocket;
@@ -126,6 +138,8 @@ public class DoorActivity extends AppCompatActivity {
     Thread belloffflagThread = null;
     Thread camoffflagThread = null;
 
+    SwipeRefreshLayout refreshLayout;
+    ViewGroup view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,29 +155,54 @@ public class DoorActivity extends AppCompatActivity {
         interphone_send_message_btn=(Button)findViewById(R.id.interphone_send_message_btn);
         interphone_send_record_btn=(Button)findViewById(R.id.interphone_send_record_btn);
 
+       // refreshLayout=(SwipeRefreshLayout)findViewById(R.id.contentSwipeLayout);
 
         //툴바 관련
         setSupportActionBar(door_toolbar);
         getSupportActionBar().setTitle("");
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.bar_button_return);
+
 
         //웹뷰 관련
-        WebSettings mywebSetting=door_streaming.getSettings();//Mobile Web Setting
-        mywebSetting.setJavaScriptEnabled(true);//자바스크립트 허용
-       // mywebSetting.setLoadWithOverviewMode(true);//컨텐츠가 웹뷰보다 클 경우 스크린 크기에 맞게 조정
-        mywebSetting.setLoadWithOverviewMode(true);
-        mywebSetting.setUseWideViewPort(true);
 
-        door_streaming.setWebViewClient(new WebViewClient(){
+
+//javascript의 window.open 허용
+        /**
+        door_streaming.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+        door_streaming.getSettings().setJavaScriptEnabled(true);//자바스크립트 허용
+        // 웹뷰 화면에 꽉차게 설정
+        door_streaming.getSettings().setLoadWithOverviewMode(true);
+        door_streaming.getSettings().setUseWideViewPort(true);
+        **/
+//        door_streaming.loadUrl("http://jsmjsm.iptime.org:8885/?action=stream");
+        door_streaming.loadUrl("http://192.168.0.8:8091/?action=stream");
+        reload();
+
+        /*
+       door_streaming.setWebViewClient(new WebViewClient()
+        {
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                refreshLayout.setRefreshing(false);
+            }
+
+        });
+
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
+            public void onRefresh() {
+                WebSettings mywebSetting2=door_streaming.getSettings();
+                mywebSetting2.setJavaScriptEnabled(true);
+                mywebSetting2.setUseWideViewPort(true);
+                mywebSetting2.setLoadWithOverviewMode(true);
+                door_streaming.reload();
             }
         });
-//        door_streaming.loadUrl("http://jsmjsm.iptime.org:8885/?action=stream");
-        door_streaming.loadUrl("http://192.168.0.8:8080/?action=stream");
+*/
+
+
+
+
 
 
         //dooractivity 들어오면 라즈베리2 에게 신호 전송 // 카메라 스트리밍
@@ -276,6 +315,26 @@ public class DoorActivity extends AppCompatActivity {
         });
     }
 
+    // 웹뷰 자동 새로고침 함수
+    public void reload(){
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                /*
+                //javascript의 window.open 허용
+                door_streaming.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+                door_streaming.getSettings().setJavaScriptEnabled(true);//자바스크립트 허용
+                // 웹뷰 화면에 꽉차게 설정
+                door_streaming.getSettings().setLoadWithOverviewMode(true);
+                door_streaming.getSettings().setUseWideViewPort(true);
+                */
+
+                door_streaming.loadUrl("http://192.168.0.8:8091/?action=stream");
+            }
+        }, 350);
+    }
     ///////////////////////////////////////////////////////////////
     private class SocketServerThread extends Thread {
 
@@ -451,11 +510,7 @@ public class DoorActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
         //dooractivity 들어오면 라즈베리1 에게 신호 전송 // 인터폰
         on_CMD = "0";
         belloffflagThread = new Thread(new ConnectThread());
@@ -466,6 +521,25 @@ public class DoorActivity extends AppCompatActivity {
         camoffflagThread = new Thread(new camConnectThread());
         camoffflagThread.start();
 
+        reload();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        reload();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        reload();
     }
 
     @Override

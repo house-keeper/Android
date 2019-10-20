@@ -57,11 +57,10 @@ public class WindowActivity extends AppCompatActivity {
     LinearLayout main_ui;
 
     public static String wifiModuleIp = "192.168.0.8";
-    public static int wifiModulePort = 8080;
+    public static int wifiModulePort = 8989;
     public static String CMD = "0";
     NetworkService networkService;
     boolean isFirstCreate=true;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,10 +85,13 @@ public class WindowActivity extends AppCompatActivity {
         try{
             String msg = result.get();
             System.out.println(msg);
+            Log.d("result:: ",msg);
             textView.setText(msg.toString());
         }catch (Exception e){
 
         }
+
+
 
         TextView next_weather_text =(TextView)findViewById(R.id.next_weather);
         nextWeatherConnection nextweatherConnection = new nextWeatherConnection();
@@ -98,6 +100,7 @@ public class WindowActivity extends AppCompatActivity {
         try{
             String msg2 = result2.get();
             System.out.println(msg2);
+            Log.d("result:: ",msg2);
             next_weather_text.setText(msg2.toString());
         }catch (Exception e){
 
@@ -110,10 +113,14 @@ public class WindowActivity extends AppCompatActivity {
         try{
             String msg3 = result3.get();
             System.out.println(msg3);
+            Log.d("result:: ",msg3);
             next_weather_text2.setText(msg3.toString());
         }catch (Exception e){
 
         }
+
+
+
 
 
        window_status_text=(TextView)findViewById(R.id.window_status);
@@ -146,6 +153,7 @@ public class WindowActivity extends AppCompatActivity {
         window_status_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Log.d("SWITCHTEST",String.valueOf(isFirstCreate));
+
                 if(!isFirstCreate){
                     if (isChecked) {
                         // The toggle is enabled
@@ -166,6 +174,8 @@ public class WindowActivity extends AppCompatActivity {
 
             }
         });
+
+
 
         //툴바 관련
         window_toolbar = (Toolbar) findViewById(R.id.window_toolbar);
@@ -204,7 +214,7 @@ public class WindowActivity extends AppCompatActivity {
                 dataOutputStream.close();
 
 
-                Log.d("DATA:: ",CMD.toString());
+                Log.d("window_DATA:: ",CMD.toString());
                 socket.close();
             }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
             return null;
@@ -246,13 +256,15 @@ public class WindowActivity extends AppCompatActivity {
                 System.out.println(elements3);
                 System.out.println(elements4);
                 System.out.println(elements5);
-
+                Log.d("result::_eli ", elements1.toString());
 
                 Element targetElement1 = elements1.get(0);
                 Element targetElement2 = elements2.get(0);
                 Element targetElement3 = elements3.get(1);
                 Element targetElement4 = elements4.get(0);
                 Element targetElement5 = elements5.get(0);
+
+                Log.d("result::_tareli ",targetElement1.toString());
 
                 String text1 = targetElement1.text();
                 String text2 = targetElement2.text();
@@ -292,7 +304,10 @@ public class WindowActivity extends AppCompatActivity {
 
 
                 String text = text1 + '\n' + text2 + '\n' + text3 + '\n' + text4;
+                Log.d("result:: text ",text1);
                 return text;
+
+
 
             }catch (Exception e){
                 e.printStackTrace();
@@ -300,6 +315,7 @@ public class WindowActivity extends AppCompatActivity {
             return null;
         }
     }
+
 
     public class nextWeatherConnection extends AsyncTask<String, String, String>{
 
@@ -318,6 +334,7 @@ public class WindowActivity extends AppCompatActivity {
 
                 System.out.println(elements1);
                 System.out.println(elements2);
+
 
                 Element targetElement1 = elements1.get(0);
                 Element targetElement2 = elements2.get(0);
@@ -352,6 +369,8 @@ public class WindowActivity extends AppCompatActivity {
             return null;
         }
     }
+
+
 
     public class nextWeatherConnection2 extends AsyncTask<String, String, String>{
 
@@ -404,6 +423,8 @@ public class WindowActivity extends AppCompatActivity {
             return null;
         }
     }
+
+
 
 
     @Override
