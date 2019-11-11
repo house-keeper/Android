@@ -94,7 +94,6 @@ public class DoorActivity extends AppCompatActivity {
     EditText interphone_my_message;
     LinearLayout interphone_my_message_view;
     Button interphone_send_message_btn, interphone_send_record_btn;
-    private TextToSpeech tts;
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
@@ -105,24 +104,20 @@ public class DoorActivity extends AppCompatActivity {
 
     private WebView door_streaming;
     ServerSocket serverSocket;
- //   private static Socket socket2;
 
-    Socket clientSocket;
     public static String outsider_message="";
     public static String rpi_confirm_message="";
-    public static String rpi_ok_message="";
 
     //Rpi1
-    public static String wifiModuleIp = "192.168.0.28";
+    public static String wifiModuleIp = "192.168.0.26";
     public static int stt_connPort =8888;
     public static int tts_sendingPort = 8881;
 
     //Rpi2
-    public static String CamwifiModuleIp ="192.168.0.8";
+    public static String CamwifiModuleIp ="192.168.0.30";
     public static int cam_sendingPort =8745 ;
 
 
-//    public static int  = 8864;
     public static String CMD = "0";
     public static String on_CMD="0";
     public static String real_text = "";
@@ -130,23 +125,17 @@ public class DoorActivity extends AppCompatActivity {
     public static String text ="";
     public static String flag ="0";
 
-    private static OutputStream os;
-
     Thread socketServerThread = null;
     Thread bellflagThread = null;
     Thread camflagThread = null;
     Thread belloffflagThread = null;
     Thread camoffflagThread = null;
 
-    SwipeRefreshLayout refreshLayout;
-    ViewGroup view;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_door);
 
-        Context ctx = this;
         door_toolbar = (Toolbar) findViewById(R.id.door_toolbar);
         door_streaming=(WebView)findViewById(R.id.door_webview);
         interphone_outsider_message=(TextView)findViewById(R.id.interphone_outsider_message);
@@ -155,55 +144,13 @@ public class DoorActivity extends AppCompatActivity {
         interphone_send_message_btn=(Button)findViewById(R.id.interphone_send_message_btn);
         interphone_send_record_btn=(Button)findViewById(R.id.interphone_send_record_btn);
 
-       // refreshLayout=(SwipeRefreshLayout)findViewById(R.id.contentSwipeLayout);
-
         //툴바 관련
         setSupportActionBar(door_toolbar);
         getSupportActionBar().setTitle("");
 
-
-        //웹뷰 관련
-
-
-//javascript의 window.open 허용
-        /**
-        door_streaming.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-        door_streaming.getSettings().setJavaScriptEnabled(true);//자바스크립트 허용
-        // 웹뷰 화면에 꽉차게 설정
-        door_streaming.getSettings().setLoadWithOverviewMode(true);
-        door_streaming.getSettings().setUseWideViewPort(true);
-        **/
-//        door_streaming.loadUrl("http://jsmjsm.iptime.org:8885/?action=stream");
-        door_streaming.loadUrl("http://192.168.0.8:8091/?action=stream");
+        //실시간 스트리밍 로드
+        door_streaming.loadUrl("http://192.168.0.30:8091/?action=stream");
         reload();
-
-        /*
-       door_streaming.setWebViewClient(new WebViewClient()
-        {
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                refreshLayout.setRefreshing(false);
-            }
-
-        });
-
-
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                WebSettings mywebSetting2=door_streaming.getSettings();
-                mywebSetting2.setJavaScriptEnabled(true);
-                mywebSetting2.setUseWideViewPort(true);
-                mywebSetting2.setLoadWithOverviewMode(true);
-                door_streaming.reload();
-            }
-        });
-*/
-
-
-
-
-
 
         //dooractivity 들어오면 라즈베리2 에게 신호 전송 // 카메라 스트리밍
         flag = "1";
@@ -215,12 +162,9 @@ public class DoorActivity extends AppCompatActivity {
         bellflagThread = new Thread(new ConnectThread());
         bellflagThread.start();
 
-
-
         //인터폰 외부인 텍스트 받기
         socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
-
 
         //인터폰 사용자 입력 관련 // 사용자가 텍스트 창 누르면 텍스트 자동 초기화
         interphone_my_message_view.setOnClickListener(new View.OnClickListener() {
@@ -248,7 +192,6 @@ public class DoorActivity extends AppCompatActivity {
                     DoorActivity.Socket_AsyncTask tts_send_text = new DoorActivity.Socket_AsyncTask();
                     tts_send_text.execute();
                     Toast.makeText(DoorActivity.this,"전송되었습니다.",Toast.LENGTH_SHORT).show();
-
                 }
             }
         });
@@ -307,7 +250,6 @@ public class DoorActivity extends AppCompatActivity {
                         CMD="r";
                         DoorActivity.Socket_AsyncTask send_S3_address = new DoorActivity.Socket_AsyncTask();
                         send_S3_address.execute();
-
                     }
                 });
                 alertBuilder.show();
@@ -321,21 +263,12 @@ public class DoorActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
-                /*
-                //javascript의 window.open 허용
-                door_streaming.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
-                door_streaming.getSettings().setJavaScriptEnabled(true);//자바스크립트 허용
-                // 웹뷰 화면에 꽉차게 설정
-                door_streaming.getSettings().setLoadWithOverviewMode(true);
-                door_streaming.getSettings().setUseWideViewPort(true);
-                */
-
-                door_streaming.loadUrl("http://192.168.0.8:8091/?action=stream");
+                door_streaming.loadUrl("http://192.168.0.30:8091/?action=stream");
             }
         }, 350);
     }
-    ///////////////////////////////////////////////////////////////
+
+    //외부인 text 받아오기
     private class SocketServerThread extends Thread {
 
         static final int SocketServerPORT = 8885;
@@ -357,11 +290,8 @@ public class DoorActivity extends AppCompatActivity {
                     // 클라이언트로부터 메시지 입력받음
                     outsider_message= bufferedReader.readLine();
                     Log.d("outMDATA:: ",outsider_message.toString());
-
-
                     JsonParser parser = new JsonParser();
                     final JsonElement element = parser.parse(outsider_message);
-
                     DoorActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -376,6 +306,7 @@ public class DoorActivity extends AppCompatActivity {
         }
     }
 
+    //RPi에 안드 연결 신호 보내주기(인터폰 기능)
     private class ConnectThread extends Thread{
 
         Socket socket2;
@@ -401,6 +332,7 @@ public class DoorActivity extends AppCompatActivity {
 
     }
 
+    //RPI에 안드 연결 신호 보내주기(실시간 스트리밍 기능)
     private class camConnectThread extends Thread{
 
         Socket socket3;
@@ -418,19 +350,13 @@ public class DoorActivity extends AppCompatActivity {
                 }
                 socket3.close();
                 this.interrupt();
-
             }catch(Exception e){
-
             }
         }
-
     }
 
 
-
-    //////////////////////////////////////////////////////
-
-
+    //RPi에 상용구녹음 혹은 사용자 text 보내기
     public class Socket_AsyncTask extends AsyncTask<Void,Void,Void>
     {
         Socket socket;
@@ -445,37 +371,23 @@ public class DoorActivity extends AppCompatActivity {
                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                     dataOutputStream.writeBytes(URLEncoder.encode(CMD, "utf-8"));
                     dataOutputStream.flush();
-                    Log.d("DATA:: ",CMD.toString());
 
                     //tts && record send
                     BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    Log.d("data","here");
                     rpi_confirm_message=br.readLine();
-                    Log.d("DATA::fromrpi",rpi_confirm_message);
-                    // dis2.close();
 
                     //tts connection success. send text
                     if (rpi_confirm_message.equals("send text")){
-                            Log.d("DATA::fromrpi","writing");
-          //                  text=URLEncoder.encode(real_text,"utf-8");
                             dataOutputStream.writeBytes(URLEncoder.encode(real_text, "UTF-8"));
-                            Log.d("DATA::output",real_text);
                             dataOutputStream.flush();
-                            Log.d("DATA::output2","flushed");
                    // send record
                     }else if(rpi_confirm_message.equals("send address")){
-                            Log.d("DATA::fromrpi","address writing");
-                            //    dataOutputStream.writeBytes(URLEncoder.encode(s3_address, "UTF-8"));
                             dataOutputStream.writeBytes(s3_address);
-                            Log.d("DATA::output",s3_address);
                             dataOutputStream.flush();
-                            Log.d("DATA::output2","flushed");
-
                     }
                     else dataOutputStream.close();
                 }
                 socket.close();
-                //flag="1";
             }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
             return null;
         }
@@ -488,11 +400,9 @@ public class DoorActivity extends AppCompatActivity {
         }
     }
 
-
     //ToolBar에 menu.xml을 인플레이트함
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //return super.onCreateOptionsMenu(menu);
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.door_menu, menu);
         return true;
@@ -504,7 +414,6 @@ public class DoorActivity extends AppCompatActivity {
         if (serverSocket != null) {
             try {
                 serverSocket.close();
-
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

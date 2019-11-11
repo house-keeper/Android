@@ -40,15 +40,10 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record);
 
-
-
         //툴바 관련
         record_toolbar = (Toolbar) findViewById(R.id.record_toolbar);
         setSupportActionBar(record_toolbar);
         getSupportActionBar().setTitle("");
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.bar_button_return);
-
         // 위젯에 대한 참조
         doortab = (Button)findViewById(R.id.doorTab); doortab.setSelected(true);
         windowtab = (Button)findViewById(R.id.windowTab); windowtab.setSelected(false);
@@ -57,41 +52,9 @@ public class RecordActivity extends AppCompatActivity implements View.OnClickLis
         doortab.setOnClickListener(this);
         windowtab.setOnClickListener(this);
         outsidertab.setOnClickListener(this);
-
         // 임의로 액티비티 호출 시점에 어느 프레그먼트를 프레임레이아웃에 띄울 것인지를 정함
         callFragment(FRAGMENT1);
     }
-
-
-//    //툴바에 menu.xml을 인플레이트함
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        //return super.onCreateOptionsMenu(menu);
-//        MenuInflater menuInflater = getMenuInflater();
-//        menuInflater.inflate(R.menu.record_menu, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()){
-//            case R.id.record_menu_delete:
-//                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
-//                        RecordActivity.this);
-//                alertBuilder.setTitle("삭제하려면 기록을 스와이프 하세요. ");
-//                alertBuilder.setPositiveButton("확인",
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog,
-//                                                int which) {
-//                                dialog.dismiss();
-//                            }
-//                        });
-//                alertBuilder.show();
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
 
     @Override
     public void onClick(View v) {

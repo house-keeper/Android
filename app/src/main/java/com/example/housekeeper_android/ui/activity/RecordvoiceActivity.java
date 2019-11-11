@@ -76,6 +76,7 @@ public class RecordvoiceActivity extends AppCompatActivity {
         mRecorder = new MediaRecorder();
 
         initRecordList(); // 녹음리스트 불러오기
+
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,11 +95,8 @@ public class RecordvoiceActivity extends AppCompatActivity {
                         if (response.isSuccessful()){
                             Toast.makeText(RecordvoiceActivity.this,"저장되었습니다.",Toast.LENGTH_SHORT);
                             initRecordList();
-//                            recordRVAdapter.notifyItemChanged(recordRVAdapter.getItemCount()+1);
-//                            recordRVAdapter.notifyDataSetChanged();
                         }
                     }
-
                     @Override
                     public void onFailure(Call<PostRecordFileResponse> call, Throwable t) {
                         Toast.makeText(getApplicationContext(),"FAIL",Toast.LENGTH_SHORT);

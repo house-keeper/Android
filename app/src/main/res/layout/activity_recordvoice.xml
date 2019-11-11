@@ -44,7 +44,7 @@
             android:id="@+id/etFileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="문 앞에 놔주세요."/>
+            android:hint="문 앞에 놔주세요."/>
 
         </LinearLayout>
 

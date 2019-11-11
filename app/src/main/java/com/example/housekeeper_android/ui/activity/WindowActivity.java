@@ -56,7 +56,7 @@ public class WindowActivity extends AppCompatActivity {
     ImageView weather_img, next_img, next_img2;
     LinearLayout main_ui;
 
-    public static String wifiModuleIp = "192.168.0.8";
+    public static String wifiModuleIp = "192.168.0.30";
     public static int wifiModulePort = 8989;
     public static String CMD = "0";
     NetworkService networkService;
@@ -73,10 +73,6 @@ public class WindowActivity extends AppCompatActivity {
         next_img2 = (ImageView)findViewById(R.id.next_img2);
         weather_status_text =(TextView)findViewById(R.id.weather_status_text);
         main_ui =(LinearLayout)findViewById(R.id.main_ui);
-//        isFirstCreate = true;
-
-
-        //
         textView = (TextView)findViewById(R.id.weatherTv);
         mainWeatherConnection weatherConnection = new mainWeatherConnection();
         AsyncTask<String, String, String> result = weatherConnection.execute("","");
@@ -88,10 +84,7 @@ public class WindowActivity extends AppCompatActivity {
             Log.d("result:: ",msg);
             textView.setText(msg.toString());
         }catch (Exception e){
-
         }
-
-
 
         TextView next_weather_text =(TextView)findViewById(R.id.next_weather);
         nextWeatherConnection nextweatherConnection = new nextWeatherConnection();
@@ -103,7 +96,6 @@ public class WindowActivity extends AppCompatActivity {
             Log.d("result:: ",msg2);
             next_weather_text.setText(msg2.toString());
         }catch (Exception e){
-
         }
 
         TextView next_weather_text2 =(TextView)findViewById(R.id.next_weather2);
@@ -116,15 +108,11 @@ public class WindowActivity extends AppCompatActivity {
             Log.d("result:: ",msg3);
             next_weather_text2.setText(msg3.toString());
         }catch (Exception e){
-
         }
 
-
-
-
-
        window_status_text=(TextView)findViewById(R.id.window_status);
-        //창문 열/닫 값 get
+
+ //창문 열림/닫힘 값 get
         Call<GetWindowStatusResponse> GetWindowStatusResponseCall = networkService.getWindowStatus();
         GetWindowStatusResponseCall.enqueue(new Callback<GetWindowStatusResponse>() {
             @Override
@@ -147,14 +135,11 @@ public class WindowActivity extends AppCompatActivity {
             }
         });
         Log.d("호출테스트: ","onCreate");
-
         window_status_switch = (Switch) findViewById(R.id.window_status_btn);
 
         window_status_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Log.d("SWITCHTEST",String.valueOf(isFirstCreate));
 
-                if(!isFirstCreate){
                     if (isChecked) {
                         // The toggle is enabled
                         CMD = "1";
@@ -168,21 +153,14 @@ public class WindowActivity extends AppCompatActivity {
                         Socket_AsyncTask cmd_increase_servo = new Socket_AsyncTask();
                         cmd_increase_servo.execute();
                     }
-                }
-                isFirstCreate = false;
-
-
             }
         });
-
 
 
         //툴바 관련
         window_toolbar = (Toolbar) findViewById(R.id.window_toolbar);
         setSupportActionBar(window_toolbar);
         getSupportActionBar().setTitle("");
-        //   getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
     @Override
@@ -190,11 +168,6 @@ public class WindowActivity extends AppCompatActivity {
         super.onResume();
         isFirstCreate = true;
     }
-
-    ////////////////////////////////////////
-
-
-    ///////////////////////////////////////////
 
 
     //창문 열/닫 위한 소켓통신
@@ -209,11 +182,8 @@ public class WindowActivity extends AppCompatActivity {
                 socket = new java.net.Socket(inetAddress,WindowActivity.wifiModulePort);
                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
                 dataOutputStream.writeBytes(CMD);
-//                dataOutputStream.writeUTF(CMD);
                 dataOutputStream.flush();
                 dataOutputStream.close();
-
-
                 Log.d("window_DATA:: ",CMD.toString());
                 socket.close();
             }catch (UnknownHostException e){e.printStackTrace();}catch (IOException e){e.printStackTrace();}
@@ -224,11 +194,11 @@ public class WindowActivity extends AppCompatActivity {
     //ToolBar에 menu.xml을 인플레이트함
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //return super.onCreateOptionsMenu(menu);
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.door_menu, menu);
         return true;
     }
+
 
     /////날씨 크롤링
     // 네트워크 작업은 AsyncTask 를 사용
@@ -249,7 +219,6 @@ public class WindowActivity extends AppCompatActivity {
                 Elements elements5 = document.select("div.fl em strong");
                 Elements elements3 = document.select("div.fl p strong");
                 Elements elements4 = document.select("div.fl p a span");
-
 
                 System.out.println(elements1);
                 System.out.println(elements2);
@@ -315,6 +284,7 @@ public class WindowActivity extends AppCompatActivity {
             return null;
         }
     }
+
 
 
     public class nextWeatherConnection extends AsyncTask<String, String, String>{
@@ -423,8 +393,6 @@ public class WindowActivity extends AppCompatActivity {
             return null;
         }
     }
-
-
 
 
     @Override

@@ -56,16 +56,10 @@ public class OutsiderRecordRVAdapter extends RecyclerView.Adapter<OutsiderRecord
                 bundle.putString("name", dataList.get(position).name);
                 fragment.setArguments(bundle);
 
-//                ((AppCompatActivity)ctx).getFragmentManager()
-//                        .beginTransaction()
-//                        .replace(R.id.fragment_container, fragment, "MyFragmentIMGoingTo")
-//                        .addToBackStack("MyFragmentIMGoingTo").commit();
-
                 FragmentManager fragmentManager = ((AppCompatActivity)ctx).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction  = fragmentManager.beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_container, fragment);
                 fragmentTransaction.commit();
-
 
             }
         });
